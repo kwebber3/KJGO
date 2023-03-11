@@ -155,13 +155,7 @@ def get_card(current_score, last_score, my_scored_cards, score_weights):
     
     else:
         selected = False
-        if (selected == False and last_score != 0 and last_score != START_SCORE) and not my_scored_cards[0] == []:
-            current_card = my_scored_cards[0][0]
-            current_score = 0
-            selected = True
-            #print("This is " + str(current_score) + "not" + str(last_score))
-        else:
-            current_score = START_SCORE
+        
         while current_score < len(score_weights) - 1 and not selected:
             current_score = current_score + 1
             if current_score != last_score and not my_scored_cards[current_score] == []:
@@ -173,6 +167,14 @@ def get_card(current_score, last_score, my_scored_cards, score_weights):
         elif selected == False and not my_scored_cards[MAX_SCORE] == []:
             current_card = my_scored_cards[MAX_SCORE][0]
             current_score = last_score
+        elif (selected == False and last_score != 0 and last_score != START_SCORE) and not my_scored_cards[0] == []:
+            current_card = my_scored_cards[0][0]
+            current_score = 0
+            selected = True
+            #print("This is " + str(current_score) + "not" + str(last_score))
+        elif selected == False and my_scored_cards[START_SCORE] == []:
+            current_score = START_SCORE
+            current_card = my_scored_cards[START_SCORE][0]
         elif selected == True:
             pass
         else:
