@@ -16,7 +16,7 @@ class SearchResult(BoxLayout):
     
     def on_entry(self, instance, new_obj):
         # handle the DictProperty named show
-        
+        #print(new_obj)
         for ch in self.children:
             if isinstance(ch, BoxLayout):
                 # remove any previous obj instances
@@ -28,17 +28,30 @@ class SearchResult(BoxLayout):
             #print("resetting")
         if not self.added:
             self.entry = new_obj
-            self.japanese = dict(self.entry)["japanese"][0]["word"]
-           # print(self.japanese)
-            self.reading = dict(self.entry)["japanese"][0]["reading"]
-           # print(self.reading)
-            if self.japanese == None:
-                self.japanese = self.reading
-            if self.reading == None:
-                self.reading = self.japanese
-            self.orientation = "horizontal"
-            self.add_widget(Label(text = self.japanese, font_name = "DroidSansJapanese"))
-            self.add_widget(Label(text = self.reading, font_name = "DroidSansJapanese"))
+            
+            i = 0
+            self.jbox = BoxLayout(orientation = "vertical")
+            self.ebox = BoxLayout(orientation = "vertical")    
+
+            for eachForm in dict(self.entry)["japanese"]:
+                self.japanese = eachForm["word"]
+                # print(self.japanese)
+                self.reading = eachForm["reading"]
+                # print(self.reading)
+                if self.japanese == None:
+                    self.japanese = ""
+                if self.reading == None:
+                    self.reading = ""
+                self.jbox.add_widget(Label(text = self.japanese + " 「" + self.reading + "」", font_name = "DroidSansJapanese"))
+                self.english = ""
+                if i < len(dict(self.entry)["senses"]):
+                    eachEng =  dict(self.entry)["senses"][i]
+                    for eachDef in eachEng["english_definitions"]:
+                        self.english = self.english + "," + eachDef
+                    self.ebox.add_widget(Label(text = self.english))
+                i = i + 1
+            self.add_widget(self.jbox)         
+            self.add_widget(self.ebox)
           #  print("added")
             self.added = True
         else:
@@ -54,6 +67,7 @@ class SearchResult(BoxLayout):
         else:
          #   print("nothing")
             self.added = False
+        self.orientation = "horizontal"
 
 Builder.load_string('''
 <ResultsView>:
@@ -61,7 +75,6 @@ Builder.load_string('''
     RecycleBoxLayout:
         size_hint_y: None
         height: self.minimum_height
-        orientation: "vertical"
     
 ''')
 
@@ -71,6 +84,7 @@ class ResultsView(RecycleView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.data = []
+        self.orientation = "vertical"
 
     def update_data(self, newData):
         self.data = []
