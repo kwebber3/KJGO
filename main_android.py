@@ -25,13 +25,13 @@ class SearchResult(BoxLayout):
         if self.entry == new_obj:
             self.clear_widgets()
             self.added = False
-            print("no")
+            #print("resetting")
         if not self.added:
             self.entry = new_obj
             self.japanese = dict(self.entry)["japanese"][0]["word"]
-            print(self.japanese)
+           # print(self.japanese)
             self.reading = dict(self.entry)["japanese"][0]["reading"]
-            print(self.reading)
+           # print(self.reading)
             if self.japanese == None:
                 self.japanese = self.reading
             if self.reading == None:
@@ -39,7 +39,7 @@ class SearchResult(BoxLayout):
             self.orientation = "horizontal"
             self.add_widget(Label(text = self.japanese, font_name = "DroidSansJapanese"))
             self.add_widget(Label(text = self.reading, font_name = "DroidSansJapanese"))
-            print("added")
+          #  print("added")
             self.added = True
         else:
             print("skipped")
@@ -52,7 +52,7 @@ class SearchResult(BoxLayout):
             self.add_widget(Label(text = self.japanese, font_name = "DroidSansJapanese"))
             self.add_widget(Label(text = self.reading, font_name = "DroidSansJapanese"))
         else:
-            print("nothing")
+         #   print("nothing")
             self.added = False
 
 Builder.load_string('''
@@ -76,7 +76,7 @@ class ResultsView(RecycleView):
         self.data = []
         self.refresh_from_data()
         self.data = newData
-        print("cat")
+        #print("cat")
 
 class HomePage(App):
     eachEntry = DictProperty()
@@ -90,7 +90,7 @@ class HomePage(App):
             for eachEntry in answer:
                 self.eachEntry = eachEntry
                 new_data.append({"entry": self.eachEntry})
-                print(type(self.eachEntry))
+              #  print(type(self.eachEntry))
             
         self.resultsBox.update_data(new_data)
         self.resultsBox.refresh_from_data()
