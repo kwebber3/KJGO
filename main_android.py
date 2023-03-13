@@ -34,6 +34,8 @@ class SearchResult(BoxLayout):
             print(self.reading)
             if self.japanese == None:
                 self.japanese = self.reading
+            if self.reading == None:
+                self.reading = self.japanese
             self.orientation = "horizontal"
             self.add_widget(Label(text = self.japanese, font_name = "DroidSansJapanese"))
             self.add_widget(Label(text = self.reading, font_name = "DroidSansJapanese"))
@@ -80,13 +82,16 @@ class HomePage(App):
     eachEntry = DictProperty()
 
     def search(self, instance):
-        answer =  Word.request(self.searchBox.text).dict()["data"]
+        response = Word.request(self.searchBox.text)
         new_data = []
-        for eachEntry in answer:
-            self.eachEntry = eachEntry
-            new_data.append({"entry": self.eachEntry})
-            print(type(self.eachEntry))
-        
+        if response != None:
+            answer =  response.dict()["data"]
+           
+            for eachEntry in answer:
+                self.eachEntry = eachEntry
+                new_data.append({"entry": self.eachEntry})
+                print(type(self.eachEntry))
+            
         self.resultsBox.update_data(new_data)
         self.resultsBox.refresh_from_data()
 
