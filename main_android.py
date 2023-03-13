@@ -22,28 +22,31 @@ class SearchResult(BoxLayout):
                 # remove any previous obj instances
                 self.remove_widget(ch)
                 break
-        
-        self.entry = new_obj
-        self.japanese = dict(self.entry)["japanese"][0]["word"]
-        print(self.japanese)
-        self.reading = dict(self.entry)["japanese"][0]["reading"]
-        print(self.reading)
-        if self.japanese == None:
-            self.japanese = self.reading
-        self.orientation = "horizontal"
-        self.add_widget(Label(text = self.japanese, font_name = "DroidSansJapanese"))
-        self.add_widget(Label(text = self.reading, font_name = "DroidSansJapanese"))
-        print("added")
-    
+        if not self.added:
+            self.entry = new_obj
+            self.japanese = dict(self.entry)["japanese"][0]["word"]
+            print(self.japanese)
+            self.reading = dict(self.entry)["japanese"][0]["reading"]
+            print(self.reading)
+            if self.japanese == None:
+                self.japanese = self.reading
+            self.orientation = "horizontal"
+            self.add_widget(Label(text = self.japanese, font_name = "DroidSansJapanese"))
+            self.add_widget(Label(text = self.reading, font_name = "DroidSansJapanese"))
+            print("added")
+            self.added = True
+        else:
+            print("skipped")
     def __init__(self, **kwargs):
         super(SearchResult, self).__init__(**kwargs)   
-        if self.entry != {}:
+        if False:
             self.japanese = dict(self.entry)["japanese"][0]["word"]
             self.reading = dict(self.entry)["japanese"][0]["reading"]
             self.add_widget(Label(text = self.japanese, font_name = "DroidSansJapanese"))
             self.add_widget(Label(text = self.reading, font_name = "DroidSansJapanese"))
         else:
             print("nothing")
+            self.added = False
 
 Builder.load_string('''
 <ResultsView>:
