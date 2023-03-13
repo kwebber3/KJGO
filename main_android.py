@@ -22,6 +22,10 @@ class SearchResult(BoxLayout):
                 # remove any previous obj instances
                 self.remove_widget(ch)
                 break
+        if self.entry == new_obj:
+            self.clear_widgets()
+            self.added = False
+            print("no")
         if not self.added:
             self.entry = new_obj
             self.japanese = dict(self.entry)["japanese"][0]["word"]
@@ -37,6 +41,7 @@ class SearchResult(BoxLayout):
             self.added = True
         else:
             print("skipped")
+
     def __init__(self, **kwargs):
         super(SearchResult, self).__init__(**kwargs)   
         if False:
@@ -66,6 +71,8 @@ class ResultsView(RecycleView):
         self.data = []
 
     def update_data(self, newData):
+        self.data = []
+        self.refresh_from_data()
         self.data = newData
         print("cat")
 
