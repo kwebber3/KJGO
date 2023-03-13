@@ -1,5 +1,6 @@
 from kivy.app import App
 from kivy.properties import DictProperty
+from kivy.properties import ObjectProperty
 from kivy.uix.label import Label
 from kivy.uix.recycleview import RecycleView
 from kivy.uix.button import Button
@@ -12,9 +13,23 @@ from functools import partial
 
 from jisho_api.word import Word
 
+class AddButton(Button):
+    def __init__(self, Entry, **kwargs):
+        super(AddButton, self).__init__(**kwargs)
+        self.entry = Entry
+        self.text = "Make Flashcard"
+
+    
+
 class SearchResult(BoxLayout):
     entry = DictProperty()
-    
+    on_press = ObjectProperty()
+
+    def add_card(self):
+        print(self.entry)
+
+
+
     def on_entry(self, instance, new_obj):
         # handle the DictProperty named show
         #print(new_obj)
@@ -32,9 +47,11 @@ class SearchResult(BoxLayout):
             self.entry = new_obj
             
             i = 0
+            #print(self.on_press)
             jbox = BoxLayout(orientation = "vertical", size_hint_x = None)
             ebox = BoxLayout(orientation = "vertical", size_hint_x = None)  
-            button = Button()  
+            button = Button(on_press = self.on_press, text = "Make Flashcard")  
+           # print("cat")
 
             for eachForm in dict(self.entry)["japanese"]:
                 self.japanese = eachForm["word"]
@@ -60,6 +77,7 @@ class SearchResult(BoxLayout):
                 j = j + 1
             self.add_widget(jbox)         
             self.add_widget(ebox)
+            self.add_widget(button)
             #print("added")
             self.added = True
             self.height = self.minimum_height*(j)
@@ -114,6 +132,7 @@ class ResultsView(RecycleView):
 
 class HomePage(App):
     eachEntry = DictProperty()
+    current = ObjectProperty()
 
     def search(self, instance):
         response = Word.request(self.searchBox.text)
@@ -123,7 +142,8 @@ class HomePage(App):
            
             for eachEntry in answer:
                 self.eachEntry = eachEntry
-                new_data.append({"entry": self.eachEntry})
+                current = partial(print,self.eachEntry)
+                new_data.append({"on_press": current,"entry": self.eachEntry, })
               #  print(type(self.eachEntry))
             
         self.resultsBox.update_data(new_data)
