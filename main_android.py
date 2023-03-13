@@ -5,6 +5,7 @@ from kivy.uix.recycleview import RecycleView
 from kivy.uix.button import Button
 from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.lang import Builder
 from functools import partial
@@ -17,12 +18,14 @@ class SearchResult(BoxLayout):
     def on_entry(self, instance, new_obj):
         # handle the DictProperty named show
         #print(new_obj)
+        self.orientation = "vertical"
+        self.height = self.minimum_height
         for ch in self.children:
             if isinstance(ch, BoxLayout):
                 # remove any previous obj instances
                 self.remove_widget(ch)
                 break
-        if self.entry == new_obj:
+        if True:
             self.clear_widgets()
             self.added = False
             #print("resetting")
@@ -30,44 +33,44 @@ class SearchResult(BoxLayout):
             self.entry = new_obj
             
             i = 0
-            self.jbox = BoxLayout(orientation = "vertical")
-            self.ebox = BoxLayout(orientation = "vertical")    
+            jbox = BoxLayout(orientation = "vertical", size_hint_min_x = 0.5)
+            ebox = BoxLayout(orientation = "vertical", size_hint_min_x = 0.5)    
 
             for eachForm in dict(self.entry)["japanese"]:
                 self.japanese = eachForm["word"]
                 # print(self.japanese)
                 self.reading = eachForm["reading"]
-                # print(self.reading)
+                #print(self.reading)
                 if self.japanese == None:
                     self.japanese = ""
                 if self.reading == None:
                     self.reading = ""
-                self.jbox.add_widget(Label(text = self.japanese + " 「" + self.reading + "」", font_name = "DroidSansJapanese"))
+                jbox.add_widget(Label(text = self.japanese + " 「" + self.reading + "」", font_name = "DroidSansJapanese"))
                 self.english = ""
                 if i < len(dict(self.entry)["senses"]):
                     eachEng =  dict(self.entry)["senses"][i]
                     for eachDef in eachEng["english_definitions"]:
                         self.english = self.english + "," + eachDef
-                    self.ebox.add_widget(Label(text = self.english))
+                    ebox.add_widget(Label(text = self.english))
                 i = i + 1
-            self.add_widget(self.jbox)         
-            self.add_widget(self.ebox)
-          #  print("added")
+            self.add_widget(jbox)         
+            self.add_widget(ebox)
+            #print("added")
             self.added = True
         else:
             print("skipped")
 
     def __init__(self, **kwargs):
         super(SearchResult, self).__init__(**kwargs)   
-        if False:
+        if self.entry != None and self.entry != {}:
             self.japanese = dict(self.entry)["japanese"][0]["word"]
             self.reading = dict(self.entry)["japanese"][0]["reading"]
             self.add_widget(Label(text = self.japanese, font_name = "DroidSansJapanese"))
             self.add_widget(Label(text = self.reading, font_name = "DroidSansJapanese"))
         else:
-         #   print("nothing")
+            print("-")
             self.added = False
-        self.orientation = "horizontal"
+        self.orientation = "vertical"
 
 Builder.load_string('''
 <ResultsView>:
@@ -75,7 +78,7 @@ Builder.load_string('''
     RecycleBoxLayout:
         size_hint_y: None
         height: self.minimum_height
-    
+        orientation: 'vertical'
 ''')
 
 class ResultsView(RecycleView):
@@ -90,6 +93,8 @@ class ResultsView(RecycleView):
         self.data = []
         self.refresh_from_data()
         self.data = newData
+        self.refresh_from_data()
+
         #print("cat")
 
 class HomePage(App):
