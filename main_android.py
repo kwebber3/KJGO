@@ -98,7 +98,7 @@ class SearchResult(BoxLayout):
             self.added = False
         self.orientation = "horizontal"
         self.height = self.minimum_height
-        self.hint_size_x = None
+        self.hint_size_x = 1
         
 
 Builder.load_string('''
