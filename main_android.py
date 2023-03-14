@@ -48,8 +48,8 @@ class SearchResult(BoxLayout):
             
             i = 0
             #print(self.on_press)
-            jbox = BoxLayout(orientation = "vertical", size_hint_x = None)
-            ebox = BoxLayout(orientation = "vertical", size_hint_x = None)  
+            jbox = BoxLayout(orientation = "vertical", size_hint_x = 2)
+            ebox = BoxLayout(orientation = "vertical", size_hint_x = 2)  
             button = Button(on_press = self.on_press, text = "Make Flashcard")  
            # print("cat")
 
@@ -98,20 +98,30 @@ class SearchResult(BoxLayout):
             self.added = False
         self.orientation = "horizontal"
         self.height = self.minimum_height
-        self.hint_size_x = 1
+        self.size_hint_x = 1
         
 
 Builder.load_string('''
 <ResultsView>:
     viewclass: 'SearchResult'
     size_hint_x: 1
+    spacing: 40
+    space_x: self.size[0]
     RecycleBoxLayout:
         default_size: None, dp(150)
+        default_size_hint: 1, None
         size_hint_y: None
-        size_hint_x: None
         height: self.minimum_height 
         orientation: 'vertical'
-        
+        outline_width: 10
+        outline_colour: (0, 1, 0, 0)
+<BoxLayout>        
+    canvas.before:
+        Color:
+            rgba: 0, 1, 0, 0.5
+        Line:    # --- adds a border --- #
+            width: 1
+            rectangle: self.x, self.y, self.width, self.height
 ''')
 
 class ResultsView(RecycleView):
@@ -134,6 +144,32 @@ class HomePage(App):
     eachEntry = DictProperty()
     current = ObjectProperty()
 
+    def makeFlashCard(self, entry, instance):
+        i = 0
+        self.japanese = []
+        self.reading = []
+        self.english = []
+        for eachForm in dict(entry)["japanese"]:
+            self.japanese.append(eachForm["word"])
+            # print(self.japanese)
+            self.reading.append(eachForm["reading"])
+            #print(self.reading)
+            if self.japanese == None:
+                self.japanese = ""
+            if self.reading == None:
+                self.reading = ""
+            self.eng = ""
+            if i < len(dict(entry)["senses"]):
+                eachEng =  dict(entry)["senses"][i]
+                for eachDef in eachEng["english_definitions"]:
+                    self.eng = self.eng + "," + eachDef
+                self.english.append(self.eng[1:])
+            i = i + 1
+
+        print(self.english)
+        print(self.japanese)
+        print(self.reading)
+
     def search(self, instance):
         response = Word.request(self.searchBox.text)
         new_data = []
@@ -142,7 +178,7 @@ class HomePage(App):
            
             for eachEntry in answer:
                 self.eachEntry = eachEntry
-                current = partial(print,self.eachEntry)
+                current = partial(self.makeFlashCard,self.eachEntry)
                 new_data.append({"on_press": current,"entry": self.eachEntry, })
               #  print(type(self.eachEntry))
             
@@ -151,10 +187,10 @@ class HomePage(App):
 
     def build(self):
         self.mybox = BoxLayout (orientation = "vertical")
-        self.searchbar = BoxLayout(orientation = "horizontal")
+        self.searchbar = BoxLayout(orientation = "horizontal", size_hint_y = 0.5)
         self.searchBox = TextInput()
         self.resultsBox = ResultsView()
-        self.mySearchBtn = Button(text = "Press me", on_press = partial(self.search))
+        self.mySearchBtn = Button(text = "Search", on_press = partial(self.search), size_hint_x = 0.2, background_color = (1,0,1,1))
         self.searchbar.add_widget(self.searchBox)
         self.searchbar.add_widget(self.mySearchBtn)
        # self.mybox.add_widget(SearchResult(Word.request("cow").dict()["data"][0])) #test
