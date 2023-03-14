@@ -1,4 +1,4 @@
-from kivy.app import App
+from kivy.uix.screenmanager import Screen
 from kivy.properties import DictProperty
 from kivy.properties import ObjectProperty
 from kivy.uix.label import Label
@@ -24,11 +24,6 @@ class AddButton(Button):
 class SearchResult(BoxLayout):
     entry = DictProperty()
     on_press = ObjectProperty()
-
-    def add_card(self):
-        print(self.entry)
-
-
 
     def on_entry(self, instance, new_obj):
         # handle the DictProperty named show
@@ -144,7 +139,7 @@ class ResultsView(RecycleView):
 
         #print("cat")
 
-class HomePage(Screen):
+class SearchBoxPage(BoxLayout):
     eachEntry = DictProperty()
     current = ObjectProperty()
 
@@ -153,7 +148,7 @@ class HomePage(Screen):
         self.japanese = []
         self.reading = []
         self.english = []
-        print(entry)
+        #print(entry)
         for eachForm in dict(entry)["japanese"]:
             self.japanese.append(eachForm["word"])
             # print(self.japanese)
@@ -176,6 +171,7 @@ class HomePage(Screen):
         print(self.reading)
 
     def search(self, instance):
+        print(instance)
         response = Word.request(self.searchBox.text)
         new_data = []
         if response != None:
@@ -187,11 +183,13 @@ class HomePage(Screen):
                 new_data.append({"on_press": current,"entry": self.eachEntry, })
               #  print(type(self.eachEntry))
             
+        print("cow")
         self.resultsBox.update_data(new_data)
         self.resultsBox.refresh_from_data()
 
     def build(self):
-        self.mybox = BoxLayout (orientation = "vertical")
+        self.name = "search_page"
+        self.orientation = "vertical"
         self.searchbar = BoxLayout(orientation = "horizontal", size_hint_y = 0.5)
         self.searchBox = TextInput()
         self.resultsBox = ResultsView()
@@ -199,11 +197,10 @@ class HomePage(Screen):
         self.searchbar.add_widget(self.searchBox)
         self.searchbar.add_widget(self.mySearchBtn)
        # self.mybox.add_widget(SearchResult(Word.request("cow").dict()["data"][0])) #test
-        self.mybox.add_widget(self.searchbar)
-        self.mybox.add_widget(self.resultsBox)
-        return self.mybox
+        self.add_widget(self.searchbar)
+        self.add_widget(self.resultsBox)
 
 if __name__ == "__main__":
-    myHomePage = HomePage()
+    myHomePage = Main()
     myHomePage.run()
         
