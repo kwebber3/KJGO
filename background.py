@@ -1,5 +1,6 @@
 from pandas import *
 import pandas as pd
+import random
 
 MAX_SCORE = 6000
 START_SCORE = 1
@@ -151,7 +152,7 @@ def get_card(current_score, last_score, my_scored_cards, score_weights):
    # print(current_score)
     #print(last_score)
     if not my_scored_cards[current_score] == []:
-        current_card = my_scored_cards[current_score][0]
+        current_card = my_scored_cards[current_score][random.randrange(0, len(my_scored_cards[current_score])-1)]
     
     else:
         selected = False
@@ -159,26 +160,26 @@ def get_card(current_score, last_score, my_scored_cards, score_weights):
         while current_score < len(score_weights) - 1 and not selected:
             current_score = current_score + 1
             if current_score != last_score and not my_scored_cards[current_score] == []:
-                current_card = my_scored_cards[current_score][0]
+                current_card = my_scored_cards[current_score][random.randrange(0, len(my_scored_cards[current_score])-1)]
                 selected = True
         if selected == False and not my_scored_cards[START_SCORE] == []:
-            current_card = my_scored_cards[START_SCORE][0]
+            current_card = my_scored_cards[START_SCORE][random.randrange(0, len(my_scored_cards[START_SCORE])-1)]
             current_score = last_score
         elif selected == False and not my_scored_cards[MAX_SCORE] == []:
-            current_card = my_scored_cards[MAX_SCORE][0]
+            current_card = my_scored_cards[MAX_SCORE][random.randrange(0, len(my_scored_cards[MAX_SCORE])-1)]
             current_score = last_score
         elif (selected == False and last_score != 0 and last_score != START_SCORE) and not my_scored_cards[0] == []:
-            current_card = my_scored_cards[0][0]
+            current_card = my_scored_cards[0][random.randrange(0, len(my_scored_cards[0])-1)]
             current_score = 0
             selected = True
             #print("This is " + str(current_score) + "not" + str(last_score))
         elif selected == False and my_scored_cards[START_SCORE] == []:
             current_score = START_SCORE
-            current_card = my_scored_cards[START_SCORE][0]
+            current_card = my_scored_cards[START_SCORE][random.randrange(0, len(my_scored_cards[START_SCORE])-1)]
         elif selected == True:
             pass
         else:
-            current_card = my_scored_cards[last_score][0]
+            current_card = my_scored_cards[last_score][random.randrange(0, len(my_scored_cards[last_score])-1)]
             current_score = last_score
             #print("***")
     return current_score, current_card
@@ -193,12 +194,12 @@ def get_card_advanced(current_score, last_score, my_scored_cards, score_weights)
         while current_score > 1 and not selected:
             current_score = current_score - 1
             if current_score != last_score and not my_scored_cards[current_score] == []:
-                current_card = my_scored_cards[current_score][0]
+                current_card = my_scored_cards[current_score][random.randrange(0, len(my_scored_cards[current_score]))]
                 selected = True
         while current_score < len(score_weights) - 1 and not selected:
             current_score = current_score + 1
             if current_score != last_score and not my_scored_cards[current_score] == []:
-                current_card = my_scored_cards[current_score][0]
+                current_card = my_scored_cards[current_score][random.randrange(0, len(my_scored_cards[current_score]))]
                 selected = True
         if selected == False and last_score >= 0:
             current_card = my_scored_cards[last_score]
