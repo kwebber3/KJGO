@@ -45,6 +45,10 @@ class SearchResult(BoxLayout):
         j = 1
         if not self.added:
             self.entry = new_obj
+            if(self.entry["is_common"]):
+                self.myColor = (1,0,1,1)
+            else:
+                self.myColor = (0,0,1,1)
             
             i = 0
             #print(self.on_press)
@@ -62,7 +66,7 @@ class SearchResult(BoxLayout):
                     self.japanese = ""
                 if self.reading == None:
                     self.reading = ""
-                label = Label(text = self.japanese + "「" + self.reading + "」", font_name = "DroidSansJapanese")
+                label = Label(text = self.japanese + "「" + self.reading + "」", font_name = "DroidSansJapanese", color = self.myColor)
                 label.bind(size=label.setter('text_size'))    
                 jbox.add_widget(label)
                 self.english = ""
@@ -149,6 +153,7 @@ class HomePage(App):
         self.japanese = []
         self.reading = []
         self.english = []
+        print(entry)
         for eachForm in dict(entry)["japanese"]:
             self.japanese.append(eachForm["word"])
             # print(self.japanese)
