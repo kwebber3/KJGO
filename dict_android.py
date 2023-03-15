@@ -12,14 +12,16 @@ from kivy.lang import Builder
 from functools import partial
 
 from jisho_api.word import Word
+import csv
+
+LISTENING_SPEAKING_FILENAME = "Listening_Speaking.txt"
+READING_WRITING_FILENAME = "Reading_Writing.txt"
 
 class AddButton(Button):
     def __init__(self, Entry, **kwargs):
         super(AddButton, self).__init__(**kwargs)
         self.entry = Entry
         self.text = "Make Flashcard"
-
-    
 
 class SearchResult(BoxLayout):
     entry = DictProperty()
@@ -144,31 +146,122 @@ class SearchBoxPage(BoxLayout):
     current = ObjectProperty()
 
     def makeFlashCard(self, entry, instance):
+        
+        ####LISTENING/SPEAKING
+        i = 0
+        self.hiragana = []
+        self.english = []
+        self.rows = []
+        #print(entry)
+        #######
+        for eachForm in dict(entry)["japanese"]:
+            if eachForm["reading"] not in self.hiragana:
+                if eachForm["reading"] == None:
+                    pass
+                else:
+                    # print(self.japanese)
+                    self.hiragana.append(eachForm["reading"])
+                    #print(self.reading)
+                    
+                    self.eng = ""
+                    if i < len(dict(entry)["senses"]):
+                        eachEng =  dict(entry)["senses"][i]
+                        for eachDef in eachEng["english_definitions"]:
+                            self.eng = self.eng + "," + eachDef
+                        self.english.append(self.eng[1:])
+                    else:
+                        print("ERROR: Less definitons than entries")
+                i = i + 1
+            else: 
+                jindex = self.japanese.index(eachForm)
+                # print(self.japanese)
+                #print(self.reading)
+                if eachForm["reading"] == None:
+                    pass
+                else:
+                    self.eng = ""
+                    if i < len(dict(entry)["senses"]):
+                        eachEng =  dict(entry)["senses"][i]
+                        for eachDef in eachEng["english_definitions"]:
+                            self.eng = self.eng + "," + eachDef
+                        self.english[jindex]= "@".join(self.english[jindex]+self.eng[1:])
+                    else:
+                        print("ERROR: Less definitons than entries")
+                i = i + 1       
+
+        with open(LISTENING_SPEAKING_FILENAME,'a', encoding='utf-8') as listFile:
+            j = 0
+            writer_object = csv.writer(listFile, delimiter="\t")
+            
+            for eachReading in self.hiragana:
+                self.rows.append([None,eachReading, self.english[j],"@","@",1,1])
+                j = j + 1
+
+            print(self.rows)
+            for eachRow in self.rows:
+                writer_object.writerow(eachRow)
+
+            listFile.close()
+        ####READING/WRITING
         i = 0
         self.japanese = []
         self.reading = []
         self.english = []
+        self.rows = []
         #print(entry)
+        #######
         for eachForm in dict(entry)["japanese"]:
-            self.japanese.append(eachForm["word"])
-            # print(self.japanese)
-            self.reading.append(eachForm["reading"])
-            #print(self.reading)
-            if self.japanese == None:
-                self.japanese = ""
-            if self.reading == None:
-                self.reading = ""
-            self.eng = ""
-            if i < len(dict(entry)["senses"]):
-                eachEng =  dict(entry)["senses"][i]
-                for eachDef in eachEng["english_definitions"]:
-                    self.eng = self.eng + "," + eachDef
-                self.english.append(self.eng[1:])
-            i = i + 1
+            if eachForm["word"] not in self.japanese:
+                if eachForm["word"] == None:
+                    pass
+                else:        
+                    self.japanese.append(eachForm["word"])
+                    # print(self.japanese)
+                    self.reading.append(eachForm["reading"])
+                    #print(self.reading)
+                    
+                    self.eng = ""
+                    if i < len(dict(entry)["senses"]):
+                        eachEng =  dict(entry)["senses"][i]
+                        for eachDef in eachEng["english_definitions"]:
+                            self.eng = self.eng + "," + eachDef
+                        self.english.append(self.eng[1:])
+                    else:
+                        print("ERROR: Less definitons than entries")
+                i = i + 1
+            else: 
+                # print(self.japanese)
+                #print(self.reading)
+                if self.japanese == None:
+                    pass
+                else:
+                    jindex = self.japanese.index(eachForm)
 
-        print(self.english)
-        print(self.japanese)
-        print(self.reading)
+                    self.reading[jindex] = "@".join([self.reading[jindex],eachForm["reading"]])
+                    
+                    self.eng = ""
+                    if i < len(dict(entry)["senses"]):
+                        eachEng =  dict(entry)["senses"][i]
+                        for eachDef in eachEng["english_definitions"]:
+                            self.eng = self.eng + "," + eachDef
+                        self.english[jindex]= "@".join(self.english[jindex]+self.eng[1:])
+                    else:
+                        print("ERROR: Less definitons than entries")
+                i = i + 1     
+
+        with open(READING_WRITING_FILENAME, 'a', encoding='utf-8') as readFile:
+            j = 0
+            writer_object = csv.writer(readFile, delimiter="\t")
+            
+            for eachKanji in self.japanese:
+                self.rows.append([None,eachKanji, self.english[j],"@","@","@",1,self.reading[j],1])
+                j = j + 1
+
+            print(self.rows)
+            for eachRow in self.rows:
+                writer_object.writerow(eachRow)
+
+            readFile.close()
 
     def search(self, instance):
         print(instance)
