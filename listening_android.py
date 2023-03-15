@@ -12,11 +12,15 @@ from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.lang import Builder
 from functools import partial
 from kivy.core.window import Window
+from kivy.core.audio import SoundLoader
 import requests
 import random
 import re
+import gtts
+
 
 from background import *
+from pydub import AudioSegment
 
 DICTIONARY_NAME = "Listening_Speaking.txt"
 
@@ -31,6 +35,10 @@ class ListeningBox(BoxLayout,):
         self.last_score = -1
         self.orientation = "vertical"
         self.buttonBar = BoxLayout(orientation = "horizontal")
+
+        self.show_button = Button(text="Show Reading", on_press=partial(self.ShowText))
+        self.buttonBar.add_widget(self.show_button)
+
         self.show_button = Button(text="Show Example", on_press=partial(self.ShowExample))
         self.buttonBar.add_widget(self.show_button)
 
@@ -42,10 +50,10 @@ class ListeningBox(BoxLayout,):
 
         self.subtractButton = Button(text="Wrong", on_press=partial(self.SubtractPoint))
         self.buttonBar.add_widget(self.subtractButton)
-
-        
         self.add_widget(self.buttonBar)
-
+        
+        self.speakButton = Button(text = "Listen", on_press = partial(self.PlayWord))
+        self.add_widget(self.speakButton)
         self.cardPrompt = Label(font_name = "DroidSansJapanese")
         self.add_widget(self.cardPrompt)
         self.example = Label(font_name = "DroidSansJapanese")
@@ -67,7 +75,20 @@ class ListeningBox(BoxLayout,):
         #print("cow died")
         Window.close()
         return True
+    
+    def get_word(self):
+        tts = gtts .gTTS( self.Japanese, lang='ja' )  ##  request google to get synthesis
+        tts .save( 'temp.mp3' )  ##  save audio
+        sound = AudioSegment.from_mp3("temp.mp3")
+        sound.export("temp.wav", format="wav")
 
+    def PlayWord(self, instance):
+        
+        sound = SoundLoader.load('temp.wav')
+        if sound:
+            print("Sound found at %s" % sound.source)
+            print("Sound is %.3f seconds" % sound.length)
+            sound.play() ##  play audio
 
     def SaveResults(self):
         export_listeningLibrary_to_txt(self.my_scored_cards,DICTIONARY_NAME)
@@ -78,8 +99,8 @@ class ListeningBox(BoxLayout,):
         self.current_score, self.current_card, self.index = get_card(self.current_score,self.last_score,self.my_scored_cards, self.score_weights)
         
        # print(self.current_card)
-        Japanese = self.current_card[JP_INDEX]
-        self.cardPrompt.text = Japanese
+        self.Japanese = self.current_card[JP_INDEX]
+        self.get_word()
         self.English = re.sub("@","\n",self.current_card[ENG_INDEX])
         self.Japanese_Example = re.sub("@","\n",self.current_card[JP_SENT_INDEX])
         self.English_Sentence = re.sub("@","\n",self.current_card[ENG_SENT_INDEX])
@@ -90,6 +111,9 @@ class ListeningBox(BoxLayout,):
         self.answer.text = ""
         self.example.text = ""
         self.sentence_answer.text = ""
+
+    def ShowText(self, instance):
+        self.cardPrompt.text = self.Japanese
 
     def ShowExample(self, instance):
         self.example.text = self.Japanese_Example
