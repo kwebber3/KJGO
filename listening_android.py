@@ -19,7 +19,8 @@ import gtts
 from pydub import AudioSegment
 import pydub
 from pydub.playback import play
- 
+from  plyer import audio
+import os
 
 from background import *
 
@@ -29,6 +30,9 @@ JP_INDEX = 0
 ENG_INDEX = 1
 JP_SENT_INDEX = 2
 ENG_SENT_INDEX = 3
+
+WINDOWS_KEY = "nt"
+ANDROID_KEY = "posix"
 
 class ListeningBox(BoxLayout,):
     def build(self):
@@ -64,6 +68,7 @@ class ListeningBox(BoxLayout,):
         self.sentence_answer = Label()
         self.add_widget(self.sentence_answer)
         
+        self.system = os.name
 
         self.GetCard()
 
@@ -83,8 +88,13 @@ class ListeningBox(BoxLayout,):
         self.PlayWord("dummy")
 
     def PlayWord(self, instance):
-        word = AudioSegment.from_mp3("temp.mp3")
-        play(word)  ##  play audio
+        if self.system == WINDOWS_KEY:
+            word = AudioSegment.from_mp3("temp.mp3")
+            play(word)  ##  play audio        elif self.system == ANDROID_KEY:
+        elif self.system == ANDROID_KEY:
+            audio.file_path = "temp.mp3"
+            audio.play()
+            
 
     def SaveResults(self):
         export_listeningLibrary_to_txt(self.my_scored_cards,DICTIONARY_NAME)
