@@ -12,15 +12,16 @@ from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.lang import Builder
 from functools import partial
 from kivy.core.window import Window
-from kivy.core.audio import SoundLoader
 import requests
 import random
 import re
 import gtts
-
+from pydub import AudioSegment
+import pydub
+from pydub.playback import play
+ 
 
 from background import *
-from pydub import AudioSegment
 
 DICTIONARY_NAME = "Listening_Speaking.txt"
 
@@ -79,16 +80,11 @@ class ListeningBox(BoxLayout,):
     def get_word(self):
         tts = gtts .gTTS( self.Japanese, lang='ja' )  ##  request google to get synthesis
         tts .save( 'temp.mp3' )  ##  save audio
-        sound = AudioSegment.from_mp3("temp.mp3")
-        sound.export("temp.wav", format="wav")
+        self.PlayWord("dummy")
 
     def PlayWord(self, instance):
-        
-        sound = SoundLoader.load('temp.wav')
-        if sound:
-            print("Sound found at %s" % sound.source)
-            print("Sound is %.3f seconds" % sound.length)
-            sound.play() ##  play audio
+        word = AudioSegment.from_mp3("temp.mp3")
+        play(word)  ##  play audio
 
     def SaveResults(self):
         export_listeningLibrary_to_txt(self.my_scored_cards,DICTIONARY_NAME)
