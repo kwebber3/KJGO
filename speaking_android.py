@@ -58,7 +58,8 @@ class SpeakingBox(BoxLayout,):
         self.sentence_answer = Label(font_name = "DroidSansJapanese")
         self.add_widget(self.sentence_answer)
         self.sentence_answer.bind(size=self.sentence_answer.setter('text_size'))    
-
+        self.endButton = Button(text = "Save & Quit", on_press = self.save_func)
+        self.add_widget(self.endButton)
 
         self.GetCard()
 
@@ -71,7 +72,13 @@ class SpeakingBox(BoxLayout,):
         #print("cow died")
         Window.close()
         return True
-
+    
+    def save_func(self, instance):
+        self.SaveResults()
+        #print("cow died")
+        Window.close()
+        return True
+    
     def SaveResults(self):
         export_speakingLibrary_to_txt(self.my_scored_cards,DICTIONARY_NAME)
 

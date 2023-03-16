@@ -69,7 +69,8 @@ class ListeningBox(BoxLayout,):
         self.sentence_answer = Label()
         self.add_widget(self.sentence_answer)
         self.sentence_answer.bind(size=self.sentence_answer.setter('text_size'))    
-
+        self.endButton = Button(text = "Save & Quit", on_press = self.save_func)
+        self.add_widget(self.endButton)
         
         self.system = os.name
 
@@ -85,6 +86,12 @@ class ListeningBox(BoxLayout,):
         Window.close()
         return True
     
+    def save_func(self, instance):
+        self.SaveResults()
+        #print("cow died")
+        Window.close()
+        return True
+
     def get_word(self):
         tts = gtts .gTTS( self.Japanese, lang='ja' )  ##  request google to get synthesis
         tts .save( 'temp.mp3' )  ##  save audio
