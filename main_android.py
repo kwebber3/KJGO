@@ -58,18 +58,18 @@ class MenuScreen(Screen):
 class LearningMainPage(Screen):
     pass
 
+
 class ListeningPage(Screen):
     def on_pre_enter(self, *args):
-       lbp = ListeningBox()
-       lbp.build()
-       self.add_widget(lbp)
+       self.lbp = ListeningBox()
+       self.lbp.build()
+       self.add_widget(self.lbp)
 
 class SpeakingPage(Screen):
     def on_pre_enter(self, *args):
-       sbp = SpeakingBox()
-       sbp.build()
-       self.add_widget(sbp)
-    
+       self.sbp = SpeakingBox()
+       self.sbp.build()
+       self.add_widget(self.sbp)
 
 class SearchPage(Screen):
     def on_pre_enter(self, *args):
@@ -94,7 +94,14 @@ class TestApp(App):
 
     def hook_keyboard(self, window, key, *largs):
         if key in [27,1001]:
-            self.sm.current = "menu"
+            if self.sm.current == "listening_page":
+                self.sm.get_screen("listening_page").lbp.SaveResults()
+                self.sm.current = "learn_page"
+            elif self.sm.current == "speaking_page":
+                self.sm.get_screen("speaking_page").sbp.SaveResults()
+                self.sm.current = "learn_page"
+            else:
+                self.sm.current = "menu"
             return True
 
 if __name__ == '__main__':
