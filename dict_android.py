@@ -1,4 +1,3 @@
-from kivy.core.window import Window
 from kivy.uix.screenmanager import Screen
 from kivy.properties import DictProperty
 from kivy.properties import ObjectProperty
@@ -145,21 +144,6 @@ class ResultsView(RecycleView):
 class SearchBoxPage(BoxLayout):
     eachEntry = DictProperty()
     current = ObjectProperty()
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self._keyboard = Window.request_keyboard(self._keyboard_closed, self, "text")
-        self._keyboard.bind(on_key_down=self._fake)
-
-    def _keyboard_closed(self):
-        #self._keyboard = None
-        pass
-    def _fake(self, keyboard, keycode, text, modifiers):
-
-        if keycode[1] == "escape":
-            keyboard.release()
-
-        return True
 
     def makeFlashCard(self, entry, instance):
         
@@ -302,7 +286,7 @@ class SearchBoxPage(BoxLayout):
         self.name = "search_page"
         self.orientation = "vertical"
         self.searchbar = BoxLayout(orientation = "horizontal", size_hint_y = 0.5)
-        self.searchBox = TextInput(font_name = "TakaoMincho", keyboard_suggestions = True, input_type = "text")
+        self.searchBox = TextInput(font_name = "TakaoMincho")
         self.resultsBox = ResultsView()
         self.mySearchBtn = Button(text = "Search", on_press = partial(self.search), size_hint_x = 0.2, background_color = (1,0,1,1))
         self.searchbar.add_widget(self.searchBox)
@@ -310,7 +294,6 @@ class SearchBoxPage(BoxLayout):
        # self.mybox.add_widget(SearchResult(Word.request("cow").dict()["data"][0])) #test
         self.add_widget(self.searchbar)
         self.add_widget(self.resultsBox)
-        self.searchBox.focus =True
 
 if __name__ == "__main__":
     myHomePage = Main()
