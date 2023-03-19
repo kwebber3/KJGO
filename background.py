@@ -226,6 +226,7 @@ def get_card_reverse(current_score, last_card, my_scored_cards, score_weights):
    # print(current_score)
     #print(last_score)
     num = 0
+    selected= False
     if not my_scored_cards[current_score] == []:
         i = 0
         for eachCard in my_scored_cards[current_score]:
@@ -235,7 +236,8 @@ def get_card_reverse(current_score, last_card, my_scored_cards, score_weights):
                 current_card = eachCard
                 break
             i = i + 1
-    
+    if selected==True:
+    	pass
     
     else:#README Something wrong here
         selected = False
