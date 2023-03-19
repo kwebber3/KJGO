@@ -149,6 +149,17 @@ class SearchBoxPage(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self, "text")
+        self._keyboard.bind(on_key_down=self._fake)
+
+    def _keyboard_closed(self):
+        #self._keyboard = None
+        pass
+    def _fake(self, keyboard, keycode, text, modifiers):
+
+        if keycode[1] == "escape":
+            keyboard.release()
+
+        return True
 
     def makeFlashCard(self, entry, instance):
         
