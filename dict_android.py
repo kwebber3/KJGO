@@ -1,3 +1,4 @@
+from kivy.core.window import Window
 from kivy.uix.screenmanager import Screen
 from kivy.properties import DictProperty
 from kivy.properties import ObjectProperty
