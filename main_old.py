@@ -15,6 +15,8 @@ from practice import Practice
 from reading import Reading
 from writing import Writing
 
+VERSION = "1.0.0"
+
 class HomePage:
     def __init__(self):
         self.homePage = Tk()
