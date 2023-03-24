@@ -198,7 +198,7 @@ class SearchBoxPage(BoxLayout):
                 if j<len(self.english)-1:
                     j = j + 1
 
-            print(self.rows)
+            #print(self.rows)
             for eachRow in self.rows:
                 writer_object.writerow(eachRow)
 
@@ -259,14 +259,14 @@ class SearchBoxPage(BoxLayout):
                 if j<len(self.english)-1:
                     j = j + 1
 
-            print(self.rows)
+            #print(self.rows)
             for eachRow in self.rows:
                 writer_object.writerow(eachRow)
 
             readFile.close()
 
     def search(self, instance):
-        print(instance)
+        #print(instance)
         response = Word.request(self.searchBox.text)
         new_data = []
         if response != None:
@@ -286,7 +286,7 @@ class SearchBoxPage(BoxLayout):
         self.name = "search_page"
         self.orientation = "vertical"
         self.searchbar = BoxLayout(orientation = "horizontal", size_hint_y = 0.5)
-        self.searchBox = TextInput(font_name = "TakaoMincho")
+        self.searchBox = TextInput(font_name = "TakaoMincho",keyboard_suggestions=True,write_tab=False,input_type="text")
         self.resultsBox = ResultsView()
         self.mySearchBtn = Button(text = "Search", on_press = partial(self.search), size_hint_x = 0.2, background_color = (1,0,1,1))
         self.searchbar.add_widget(self.searchBox)

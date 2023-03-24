@@ -1,11 +1,5 @@
-from kivy.app import App
-from kivy.base import EventLoop
-from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from functools import partial
 from kivy.config import Config
+Config.set('kivy', 'keyboard_mode', 'system')
 
 from functools import partial
 
@@ -13,8 +7,13 @@ from dict_android import *
 from listening_android import *
 from speaking_android import *
 
-Config.set('kivy', 'keyboard_mode', 'systemandmulti')
-
+from kivy.app import App
+from kivy.base import EventLoop
+from kivy.lang import Builder
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.button import Button
+from functools import partial
 # Create both screens. Please note the root.manager.current: this is how
 # you can control the ScreenManager from kv. Each screen has by default a
 # property manager that gives you the instance of the ScreenManager used.
