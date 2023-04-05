@@ -22,14 +22,14 @@ from pydub.playback import play
 from  plyer import audio
 import os
 
-from background import *
+from background_android import *
 
-DICTIONARY_NAME = "Listening_Speaking.txt"
+DICTIONARY_NAME = "User_Loaded.txt"
 
-JP_INDEX = 0
-ENG_INDEX = 1
-JP_SENT_INDEX = 2
-ENG_SENT_INDEX = 3
+JP_INDEX = 1
+ENG_INDEX = 2
+JP_SENT_INDEX = 4
+ENG_SENT_INDEX = 5
 
 WINDOWS_KEY = "nt"
 ANDROID_KEY = "posix"

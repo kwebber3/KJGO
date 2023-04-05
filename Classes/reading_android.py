@@ -16,9 +16,9 @@ import requests
 import random
 import re
 
-from background import *
+from background_android import *
 
-DICTIONARY_NAME = "Listening_Speaking.txt"
+DICTIONARY_NAME = "User_Loaded.txt"
 
 JP_INDEX = 0
 ENG_INDEX = 1
