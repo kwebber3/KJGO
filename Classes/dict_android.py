@@ -14,8 +14,7 @@ from functools import partial
 from jisho_api.word import Word
 import csv
 
-LISTENING_SPEAKING_FILENAME = "Listening_Speaking.txt"
-READING_WRITING_FILENAME = "Reading_Writing.txt"
+LISTENING_SPEAKING_FILENAME = "../all.txt"
 
 class AddButton(Button):
     def __init__(self, Entry, **kwargs):
