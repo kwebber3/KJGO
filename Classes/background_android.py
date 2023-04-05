@@ -20,27 +20,31 @@ S_SCORE_HEADER = "speaking score"
 R_SCORE_HEADER = "reading score"
 W_SCORE_HEADER = "writing score"
 
-LS_AG_COlUMNS = {KANJI_HEADER: lambda x: '@'.join(x),
-                ENGLISH_HEADER: lambda x: '@'.join(x),
-                K_SENTENCE_HEADER: lambda x: '@'.join(x),
-                JP_SENTENCE_HEADER: lambda x: '@'.join(x),
-                ENG_SENTENCE_HEADER: lambda x: '@'.join(x),
-                L_SCORE_HEADER: "mean",
-                S_SCORE_HEADER: "mean",
-                R_SCORE_HEADER: "mean",
-                W_SCORE_HEADER: "mean"
+LS_AG_COlUMNS = {KANJI_HEADER: lambda x: list(x),
+                ENGLISH_HEADER: lambda x: list(x),
+                K_SENTENCE_HEADER: lambda x: list(x),
+                JP_SENTENCE_HEADER: lambda x: list(x),
+                ENG_SENTENCE_HEADER: lambda x: list(x),
+                L_SCORE_HEADER: lambda x: list(x),
+                S_SCORE_HEADER: lambda x: list(x),
+                R_SCORE_HEADER: lambda x: list(x),
+                W_SCORE_HEADER: lambda x: list(x)
                 }
 
-RW_AG_COlUMNS = {R_HEADER: lambda x: '@'.join(x),
-                ENGLISH_HEADER: lambda x: '@'.join(x),
-                K_SENTENCE_HEADER: lambda x: '@'.join(x),
-                JP_SENTENCE_HEADER: lambda x: '@'.join(x),
-                ENG_SENTENCE_HEADER: lambda x: '@'.join(x),
-                L_SCORE_HEADER: "mean",
-                S_SCORE_HEADER: "mean",
-                R_SCORE_HEADER: "mean",
-                W_SCORE_HEADER: "mean"
+RW_AG_COlUMNS = {R_HEADER: lambda x: list(x),
+                ENGLISH_HEADER: lambda x: list(x),
+                K_SENTENCE_HEADER: lambda x: list(x),
+                JP_SENTENCE_HEADER: lambda x: list(x),
+                ENG_SENTENCE_HEADER: lambda x: list(x),
+                L_SCORE_HEADER: lambda x: list(x),
+                S_SCORE_HEADER: lambda x: list(x),
+                R_SCORE_HEADER: lambda x: list(x),
+                W_SCORE_HEADER: lambda x: list(x)
                 }
+
+ALL_COLUMNS = list(LS_AG_COlUMNS.keys())
+ALL_COLUMNS.append(R_HEADER)
+print(len(ALL_COLUMNS))
 
 
 MIN_SCORE = 7
@@ -64,20 +68,23 @@ def load_listening_dictionary(filename, sep = "\t"):
 
     i = 1
     for index, row in x.iterrows():
-        this_score = row[L_SCORE_HEADER]
+       # print(row)
+        this_score = int(statistics.mean(row[L_SCORE_HEADER]))
         dictionary[this_score].append([row[KANJI_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[S_SCORE_HEADER],row[R_SCORE_HEADER],row[W_SCORE_HEADER]])
         i = i + 1
 
     score_weights = update_weights(dictionary, i)
     return dictionary, score_weights, i
 
+def export_listeningLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding = "UTF-16"):
+    score_table = format_to_table_listening(scored_dict)    
 
+   # print(score_table)
 
+    score_table = score_table.explode([KANJI_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER])
 
+    score_table.to_csv(filename, sep = delimiter,encoding = encoding)
 
-def export_listeningLibrary_to_txt(scored_dict,filename,delimiter ="\t"):
-    score_table = format_to_table_listening(scored_dict)
-    score_table.to_csv(filename, sep = delimiter)
 def format_to_table_listening(scored_dictionary):
     values = {}
     i = 0
@@ -85,10 +92,10 @@ def format_to_table_listening(scored_dictionary):
         for eachCard in scored_dictionary[eachScore]:
            # print(eachCard)
             thisRow = eachCard
-            thisRow.append(eachScore)
+            thisRow.append(str(eachScore))
             values.update({i:thisRow})
             i = i + 1
-    return(pd.DataFrame(values.values(),columns=[R_HEADER, ENGLISH_HEADER, JP_SENTENCE_HEADER, ENG_SENTENCE_HEADER,S_SCORE_HEADER,L_SCORE_HEADER]))
+    return(pd.DataFrame(values.values(),columns=[KANJI_HEADER,R_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER,L_SCORE_HEADER]))
 
 def get_card(current_score, last_score, my_scored_cards, score_weights):
    # print(current_score)

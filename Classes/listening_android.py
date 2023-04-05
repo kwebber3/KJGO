@@ -121,9 +121,9 @@ class ListeningBox(BoxLayout,):
        # print(self.current_card)
         self.Japanese = self.current_card[JP_INDEX]
         self.get_word()
-        self.English = re.sub("@","\n",self.current_card[ENG_INDEX])
-        self.Japanese_Example = re.sub("@","\n",self.current_card[JP_SENT_INDEX])
-        self.English_Sentence = re.sub("@","\n",self.current_card[ENG_SENT_INDEX])
+        self.English = '\n'.join(self.current_card[ENG_INDEX])
+        self.Japanese_Example = '\n'.join(self.current_card[JP_SENT_INDEX])
+        self.English_Sentence = '\n'.join(self.current_card[ENG_SENT_INDEX])
         self.Japanese_Example = re.sub("<[/]*b>","",self.Japanese_Example)
 
     def refresh(self):
