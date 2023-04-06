@@ -292,7 +292,7 @@ def load_reading_dictionary(filename, sep = "\t"):
     for index, row in x.iterrows():
        # print(row)
         this_score = int(statistics.mean(row[R_SCORE_HEADER]))
-        dictionary[this_score].append([row[R_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[L_SCORE_HEADER],row[S_SCORE_HEADER],row[W_SCORE_HEADER]])
+        dictionary[this_score].append([row[KANJI_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[L_SCORE_HEADER],row[S_SCORE_HEADER],row[W_SCORE_HEADER]])
         i = i + 1
 
     score_weights = update_weights(dictionary, i)
@@ -303,7 +303,7 @@ def export_readingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding 
 
    # print(score_table)
 
-    score_table = score_table.explode([KANJI_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,L_SCORE_HEADER,S_SCORE_HEADER,W_SCORE_HEADER])
+    score_table = score_table.explode([R_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,L_SCORE_HEADER,S_SCORE_HEADER,W_SCORE_HEADER])
 
     score_table.to_csv(filename, sep = delimiter,encoding = encoding)
 
@@ -388,7 +388,7 @@ def load_writing_dictionary(filename, sep = "\t"):
     for index, row in x.iterrows():
        # print(row)
         this_score = int(statistics.mean(row[W_SCORE_HEADER]))
-        dictionary[this_score].append([row[R_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[L_SCORE_HEADER],row[S_SCORE_HEADER],row[R_SCORE_HEADER]])
+        dictionary[this_score].append([row[KANJI_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[L_SCORE_HEADER],row[S_SCORE_HEADER],row[R_SCORE_HEADER]])
         i = i + 1
 
     score_weights = update_weights(dictionary, i)
@@ -399,7 +399,7 @@ def export_writingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding 
 
    # print(score_table)
 
-    score_table = score_table.explode([KANJI_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,L_SCORE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER])
+    score_table = score_table.explode([R_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,L_SCORE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER])
 
     score_table.to_csv(filename, sep = delimiter,encoding = encoding)
 
