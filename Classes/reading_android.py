@@ -1,4 +1,3 @@
-from background import *
 from kivy.uix.screenmanager import Screen
 from kivy.properties import DictProperty
 from kivy.properties import ObjectProperty
@@ -53,13 +52,16 @@ class ReadingBox(BoxLayout,):
         self.cardPrompt = Label(font_name = "TakaoMincho")
         self.add_widget(self.cardPrompt)
         self.example = Label(font_name = "TakaoMincho")
+        self.example.bind(size=self.example.setter('text_size'))    
         self.add_widget(self.example)
         self.reading = Label(font_name = "TakaoMincho")
         self.add_widget(self.reading)
-        self.answer = Label()
+        self.answer = Label(font_name = "TakaoMincho")
         self.add_widget(self.answer)
-        self.sentence_answer = Label()
+        self.sentence_answer = Label(font_name = "TakaoMincho")
         self.add_widget(self.sentence_answer)
+        self.sentence_answer.bind(size=self.sentence_answer.setter('text_size'))    
+
         
 
         self.GetCard()
@@ -85,14 +87,15 @@ class ReadingBox(BoxLayout,):
         self.saved = False
         
         if status == "GOOD":
-            Japanese = self.current_card[JP_INDEX]
+            #print(self.current_card)
+            Japanese = '\n'.join(self.current_card[JP_INDEX])
             self.cardPrompt.text = Japanese
             self.English = '\n'.join(self.current_card[ENG_INDEX])
-            self.Japanese_Sentence = '\n'.join(self.current_card[R_EXP_INDEX])
+            self.Japanese_Sentence = '\n'.join(self.current_card[JP_SENT_INDEX])
             self.KanjiReadings = '\n'.join(self.current_card[R_INDEX])
             self.English_Example = '\n'.join(self.current_card[ENG_SENT_INDEX])
             self.Japanese_Sentence = re.sub("<[/]*b>","",self.Japanese_Sentence)
-            self.Kanji_Example = '\n'.join(self.current_card[K_SENTENCE_HEADER])
+            self.Kanji_Example = '\n'.join(self.current_card[R_EXP_INDEX])
             self.Kanji_Example = re.sub("<[/]*b>","",self.Kanji_Example)
 
 
@@ -128,7 +131,7 @@ class ReadingBox(BoxLayout,):
     def ShowAnswer(self, instance):
         self.reading.text = self.KanjiReadings
         self.answer.text = self.English
-        self.sentence_answer.text = self.English_Sentence
+        self.sentence_answer.text = self.English_Example
 
     def AddPoint(self, instance):
        # print(self.current_score)

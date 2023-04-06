@@ -1,4 +1,3 @@
-from background import *
 from kivy.uix.screenmanager import Screen
 from kivy.properties import DictProperty
 from kivy.properties import ObjectProperty
@@ -54,13 +53,14 @@ class WritingBox(BoxLayout,):
         self.add_widget(self.cardPrompt)
         self.example = Label(font_name = "TakaoMincho")
         self.add_widget(self.example)
+        self.example.bind(size=self.example.setter('text_size'))    
         self.reading = Label(font_name = "TakaoMincho")
         self.add_widget(self.reading)
-        self.answer = Label()
+        self.answer = Label(font_name = "TakaoMincho")
         self.add_widget(self.answer)
-        self.sentence_answer = Label()
+        self.sentence_answer = Label(font_name = "TakaoMincho")
         self.add_widget(self.sentence_answer)
-        
+        self.sentence_answer.bind(size=self.sentence_answer.setter('text_size'))    
 
         self.GetCard()
 
@@ -85,7 +85,7 @@ class WritingBox(BoxLayout,):
         self.saved = False
         
         if status == "GOOD":
-            Japanese = self.current_card[R_INDEX]
+            Japanese = '\n'.join(self.current_card[R_INDEX])
             self.cardPrompt.text = Japanese
             self.English = '\n'.join(self.current_card[ENG_INDEX])
             self.Japanese_Sentence = '\n'.join(self.current_card[R_EXP_INDEX])
@@ -123,12 +123,12 @@ class WritingBox(BoxLayout,):
         self.reading.text = ""
 
     def ShowExample(self, instance):
-        self.example.text = self.Kanji_Sentence
+        self.example.text = self.Japanese_Sentence
 
     def ShowAnswer(self, instance):
         self.reading.text = self.Kanji
         self.answer.text = self.English
-        self.sentence_answer.text = self.English_Sentence
+        self.sentence_answer.text = self.English_Example
 
     def AddPoint(self, instance):
        # print(self.current_score)

@@ -1,4 +1,3 @@
-from background import *
 from kivy.uix.screenmanager import Screen
 from kivy.properties import DictProperty
 from kivy.properties import ObjectProperty
@@ -69,9 +68,10 @@ class ListeningBox(BoxLayout,):
         self.sentence_answer = Label()
         self.add_widget(self.sentence_answer)
         self.sentence_answer.bind(size=self.sentence_answer.setter('text_size'))    
+        '''
         self.endButton = Button(text = "Save & Quit", on_press = self.save_func)
         self.add_widget(self.endButton)
-        
+        '''
         self.system = os.name
 
         self.GetCard()

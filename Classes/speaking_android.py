@@ -1,4 +1,3 @@
-from background import *
 from kivy.uix.screenmanager import Screen
 from kivy.properties import DictProperty
 from kivy.properties import ObjectProperty
@@ -58,8 +57,10 @@ class SpeakingBox(BoxLayout,):
         self.sentence_answer = Label(font_name = "DroidSansJapanese")
         self.add_widget(self.sentence_answer)
         self.sentence_answer.bind(size=self.sentence_answer.setter('text_size'))    
+        '''
         self.endButton = Button(text = "Save & Quit", on_press = self.save_func)
         self.add_widget(self.endButton)
+        '''
 
         self.GetCard()
 
@@ -93,7 +94,7 @@ class SpeakingBox(BoxLayout,):
         self.saved = False
         
         if status == "GOOD":
-            English = self.current_card[ENG_INDEX]
+            English = '\n'.join(self.current_card[ENG_INDEX])
             self.cardPrompt.text = English
             self.Japanese = '\n'.join(self.current_card[JP_INDEX])
             self.Japanese_Sentence = '\n'.join(self.current_card[JP_SENT_INDEX])
