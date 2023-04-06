@@ -23,7 +23,7 @@ import os
 
 from background_android import *
 
-DICTIONARY_NAME = "User_Loaded.txt"
+DICTIONARY_NAME = "../User_Loaded.txt"
 
 JP_INDEX = 1
 ENG_INDEX = 2

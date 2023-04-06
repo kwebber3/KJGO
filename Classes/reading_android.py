@@ -17,7 +17,7 @@ import re
 
 from background_android import *
 
-DICTIONARY_NAME = "User_Loaded.txt"
+DICTIONARY_NAME = "../User_Loaded.txt"
 
 JP_INDEX = 0
 ENG_INDEX = 1

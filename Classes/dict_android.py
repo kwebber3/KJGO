@@ -10,11 +10,24 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.recycleboxlayout import RecycleBoxLayout
 from kivy.lang import Builder
 from functools import partial
+import re
+from pandas import *
+import pandas as pd
 
 from jisho_api.word import Word
-import csv
+from jisho_api.sentence import Sentence
+KANJI_HEADER = "Kanji"
+R_HEADER = "Reading"
+ENGLISH_HEADER = "English"
+K_SENTENCE_HEADER = "Japanese Example"
+JP_SENTENCE_HEADER = "Example Reading"
+ENG_SENTENCE_HEADER = "English Sentence"
+L_SCORE_HEADER = "listening score"
+S_SCORE_HEADER = "speaking score"
+R_SCORE_HEADER = "reading score"
+W_SCORE_HEADER = "writing score"
 
-LISTENING_SPEAKING_FILENAME = "../all.txt"
+USER_FILENAME = "../User_Loaded.txt"
 
 class AddButton(Button):
     def __init__(self, Entry, **kwargs):
@@ -59,13 +72,13 @@ class SearchResult(BoxLayout):
                 self.reading = eachForm["reading"]
                 #print(self.reading)
                 if self.japanese == None:
-                    self.japanese = ""
+                    self.japanese = " "
                 if self.reading == None:
-                    self.reading = ""
+                    self.reading = " "
                 label = Label(text = self.japanese + "「" + self.reading + "」", font_name = "DroidSansJapanese", color = self.myColor)
                 label.bind(size=label.setter('text_size'))    
                 jbox.add_widget(label)
-                self.english = ""
+                self.english = " "
                 if i < len(dict(self.entry)["senses"]):
                     eachEng =  dict(self.entry)["senses"][i]
                     for eachDef in eachEng["english_definitions"]:
@@ -145,124 +158,77 @@ class SearchBoxPage(BoxLayout):
     current = ObjectProperty()
 
     def makeFlashCard(self, entry, instance):
-        
-        ####LISTENING/SPEAKING
         i = 0
-        self.hiragana = []
-        self.english = []
-        self.rows = []
-        #print(entry)
-        #######
+        new_lines = pd.DataFrame({KANJI_HEADER: [],
+                                R_HEADER: [],
+                                ENGLISH_HEADER: [],
+                                K_SENTENCE_HEADER: [],
+                                JP_SENTENCE_HEADER: [],
+                                ENG_SENTENCE_HEADER: [],
+                                L_SCORE_HEADER: [],
+                                S_SCORE_HEADER: [],
+                                R_SCORE_HEADER: [],
+                                W_SCORE_HEADER: []}
+        )
         for eachForm in dict(entry)["japanese"]:
-            if eachForm["reading"] not in self.hiragana:
-                if eachForm["reading"] == None:
-                    pass
-                else:
-                    # print(self.japanese)
-                    self.hiragana.append(eachForm["reading"])
-                    #print(self.reading)
+            current_dict = pd.DataFrame(columns=[L_SCORE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER],data=[[1,1,1,1]])
+            if eachForm["reading"] == None:
+                current_dict[R_HEADER] = " "
+            else:
+                current_dict[R_HEADER] = eachForm["reading"]
+            if eachForm["word"] == None:
+                current_dict[KANJI_HEADER] = " "
+                current_dict[ENG_SENTENCE_HEADER] = " "
+                current_dict[JP_SENTENCE_HEADER] = " "
+                current_dict[K_SENTENCE_HEADER] = " "
+            else:
+                current_dict[KANJI_HEADER] = eachForm["word"]
+                sent_entry = Sentence.request(eachForm["word"])
+                if sent_entry == None:
+                    print("no sentences found")
+                    current_dict[ENG_SENTENCE_HEADER] = " "
+                    current_dict[JP_SENTENCE_HEADER] = " "
+                    current_dict[K_SENTENCE_HEADER] = " " 
+                elif len(sent_entry)>0:
+                    sent_entry = sent_entry.dict()["data"]
+                    current_dict[ENG_SENTENCE_HEADER] = sent_entry[0]["en_translation"]
+                    #Remove Kanji and leave blanks as furigana are wierd sometimes
                     
-                    self.eng = ""
-                    if i < len(dict(entry)["senses"]):
-                        eachEng =  dict(entry)["senses"][i]
-                        for eachDef in eachEng["english_definitions"]:
-                            self.eng = self.eng + "," + eachDef
-                        self.english.append(self.eng[1:])
-                    else:
-                        print("ERROR: Less definitons than entries")
-                i = i + 1
-            else: 
-                jindex = self.hiragana.index(eachForm["reading"])
-                # print(self.japanese)
-                #print(self.reading)
-                if eachForm["reading"] == None:
-                    pass
+                    x = re.sub("[\u3300-\u33ff]","_",sent_entry[0]["japanese"])
+                    x = re.sub("[\ufe30-\ufe4f]","_",x)
+                    x = re.sub("[\uf900-\ufaff]","_",x)
+                    x = re.sub("[\U0002F800-\U0002fa1f]","_",x)
+                    x = re.sub("[\u4e00-\u9fff]","_",x)
+                    x = re.sub("[\u3400-\u4dbf]","_",x)
+                    x = re.sub("[\U00020000-\U0002a6df]","_",x)
+                    x = re.sub("[\U0002a700-\U0002b73f]","_",x)
+                    x = re.sub("[\U0002b740-\U0002b81f]","_",x)
+                    x = re.sub("[\U0002b820-\U0002ceaf]","_",x)
+                    current_dict[JP_SENTENCE_HEADER] = x
+                    #Remove Hiragana in parenthesis for kanji sentence
+                    y = re.sub("\\([\u3040-\u309f]\\)","",sent_entry[0]["japanese"])
+                 
+                    #Remove Katakana in parenthesis
+                    current_dict[K_SENTENCE_HEADER] = re.sub("\\([\u30a0-\u30ff]*\\)","",y)
                 else:
-                    self.eng = ""
-                    if i < len(dict(entry)["senses"]):
-                        eachEng =  dict(entry)["senses"][i]
-                        for eachDef in eachEng["english_definitions"]:
-                            self.eng = self.eng + "," + eachDef
-                        self.english[jindex]= "@".join(self.english[jindex]+self.eng[1:])
-                    else:
-                        print("ERROR: Less definitons than entries")
-                i = i + 1       
-
-        with open(LISTENING_SPEAKING_FILENAME,'a', encoding='utf-8') as listFile:
-            j = 0
-            writer_object = csv.writer(listFile, delimiter="\t")
+                    print("0 sentences found")
+                    current_dict[ENG_SENTENCE_HEADER] = " "
+                    current_dict[JP_SENTENCE_HEADER] = " "
+                    current_dict[K_SENTENCE_HEADER] = " "
+            eng = ""
+            if i < len(dict(entry)["senses"]):
+                eachEng =  dict(entry)["senses"][i]
+                for eachDef in eachEng["english_definitions"]:
+                    eng = eng + "," + eachDef
+                current_dict[ENGLISH_HEADER] = eng[1:]
+            else:
+                print("not enough definitions for this form")
             
-            for eachReading in self.hiragana:
-                self.rows.append([None,eachReading, self.english[j],"@","@",1,1])
-                if j<len(self.english)-1:
-                    j = j + 1
+            new_lines = pd.concat([new_lines, current_dict])
+            i = i + 1
 
-            #print(self.rows)
-            for eachRow in self.rows:
-                writer_object.writerow(eachRow)
-
-            listFile.close()
-        ####READING/WRITING
-        i = 0
-        self.japanese = []
-        self.reading = []
-        self.english = []
-        self.rows = []
-        #print(entry)
-        #######
-        for eachForm in dict(entry)["japanese"]:
-            if eachForm["word"] not in self.japanese:
-                if eachForm["word"] == None:
-                    pass
-                else:        
-                    self.japanese.append(eachForm["word"])
-                    # print(self.japanese)
-                    self.reading.append(eachForm["reading"])
-                    #print(self.reading)
-                    
-                    self.eng = ""
-                    if i < len(dict(entry)["senses"]):
-                        eachEng =  dict(entry)["senses"][i]
-                        for eachDef in eachEng["english_definitions"]:
-                            self.eng = self.eng + "," + eachDef
-                        self.english.append(self.eng[1:])
-                    else:
-                        print("ERROR: Less definitons than entries")
-                i = i + 1
-            else: 
-                # print(self.japanese)
-                #print(self.reading)
-                if self.japanese == None:
-                    pass
-                else:
-                    jindex = self.japanese.index(eachForm["word"])
-
-                    self.reading[jindex] = "@".join([self.reading[jindex],eachForm["reading"]])
-                    
-                    self.eng = ""
-                    if i < len(dict(entry)["senses"]):
-                        eachEng =  dict(entry)["senses"][i]
-                        for eachDef in eachEng["english_definitions"]:
-                            self.eng = self.eng + "," + eachDef
-                        self.english[jindex]= "@".join(self.english[jindex]+self.eng[1:])
-                    else:
-                        print("ERROR: Less definitons than entries")
-                i = i + 1     
-
-        with open(READING_WRITING_FILENAME, 'a', encoding='utf-8') as readFile:
-            j = 0
-            writer_object = csv.writer(readFile, delimiter="\t")
-            
-            for eachKanji in self.japanese:
-                self.rows.append([None,eachKanji, self.english[j],"@","@","@",1,self.reading[j],1])
-                if j<len(self.english)-1:
-                    j = j + 1
-
-            #print(self.rows)
-            for eachRow in self.rows:
-                writer_object.writerow(eachRow)
-
-            readFile.close()
+        #print(new_lines)
+        new_lines.to_csv(USER_FILENAME, mode='a', header = False,sep ="\t", encoding="UTF-16",index=False)
 
     def search(self, instance):
         #print(instance)

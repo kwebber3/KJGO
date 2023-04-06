@@ -83,7 +83,7 @@ def export_listeningLibrary_to_txt(scored_dict,filename,delimiter ="\t", encodin
 
     score_table = score_table.explode([KANJI_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER])
 
-    score_table.to_csv(filename, sep = delimiter,encoding = encoding)
+    score_table.to_csv(filename, sep = delimiter,encoding = encoding,index=False)
 
 def format_to_table_listening(scored_dictionary):
     values = {}
@@ -191,7 +191,7 @@ def load_speaking_dictionary(filename, sep = "\t"):
     score_weights = update_weights(dictionary, i)
     return dictionary, score_weights, i
 
-def export_speakingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding = "UTF-16"):
+def export_speakingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding = "UTF-16",index=False):
     score_table = format_to_table_speaking(scored_dict)    
 
    # print(score_table)
@@ -298,7 +298,7 @@ def load_reading_dictionary(filename, sep = "\t"):
     score_weights = update_weights(dictionary, i)
     return dictionary, score_weights, i
 
-def export_readingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding = "UTF-16"):
+def export_readingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding = "UTF-16",index=False):
     score_table = format_to_table_reading(scored_dict)    
 
    # print(score_table)
@@ -394,7 +394,7 @@ def load_writing_dictionary(filename, sep = "\t"):
     score_weights = update_weights(dictionary, i)
     return dictionary, score_weights, i
 
-def export_writingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding = "UTF-16"):
+def export_writingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding = "UTF-16",index=False):
     score_table = format_to_table_writing(scored_dict)    
 
    # print(score_table)
