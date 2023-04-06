@@ -10,7 +10,7 @@ package.name = junbanankijisho
 package.domain = org.test
 
 # (str) Source code where the main.py live
-source.dir = .
+source.dir = ./Classes
 
 # (list) Source files to include (let empty to include all the files)
 source.include_exts = py,png,jpg,kv,atlas,txt,ttf
@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy,pandas,plyer,gtts,jisho_api,pydub,requests,urllib3,charset_normalizer,chardet,idna,pydantic,rich,markdown-it-py,mdurl,pygments,click
+requirements = python3,kivy,pandas,statistics,plyer,gtts,jisho_api,pydub,requests,urllib3,charset_normalizer,chardet,idna,pydantic,rich,markdown-it-py,mdurl,pygments,click
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
