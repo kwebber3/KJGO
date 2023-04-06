@@ -44,7 +44,7 @@ RW_AG_COlUMNS = {R_HEADER: lambda x: list(x),
 
 ALL_COLUMNS = list(LS_AG_COlUMNS.keys())
 ALL_COLUMNS.append(R_HEADER)
-print(len(ALL_COLUMNS))
+#print(len(ALL_COLUMNS))
 
 
 MIN_SCORE = 7
@@ -172,7 +172,47 @@ def get_card(current_score, last_score, my_scored_cards, score_weights):
     
     return current_score, current_card, num
 
-def get_card_reverse(current_score, last_card, my_scored_cards, score_weights):
+
+def load_speaking_dictionary(filename, sep = "\t"):
+    x = read_table_LS(filepath_or_buffer=filename, delimiter=sep)
+    
+    dictionary = {}
+
+    for number in range(0,MAX_SCORE):
+        dictionary[number] = []
+
+    i = 1
+    for index, row in x.iterrows():
+       # print(row)
+        this_score = int(statistics.mean(row[S_SCORE_HEADER]))
+        dictionary[this_score].append([row[KANJI_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[L_SCORE_HEADER],row[R_SCORE_HEADER],row[W_SCORE_HEADER]])
+        i = i + 1
+
+    score_weights = update_weights(dictionary, i)
+    return dictionary, score_weights, i
+
+def export_speakingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding = "UTF-16"):
+    score_table = format_to_table_speaking(scored_dict)    
+
+   # print(score_table)
+
+    score_table = score_table.explode([KANJI_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER,L_SCORE_HEADER])
+
+    score_table.to_csv(filename, sep = delimiter,encoding = encoding)
+
+def format_to_table_speaking(scored_dictionary):
+    values = {}
+    i = 0
+    for eachScore in scored_dictionary.keys():
+        for eachCard in scored_dictionary[eachScore]:
+           # print(eachCard)
+            thisRow = eachCard
+            thisRow.append(str(eachScore))
+            values.update({i:thisRow})
+            i = i + 1
+    return(pd.DataFrame(values.values(),columns=[KANJI_HEADER,R_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,L_SCORE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER,S_SCORE_HEADER]))
+
+def get_card_speaking(current_score, last_card, my_scored_cards, score_weights):
    # print(current_score)
     #print(last_score)
     num = 0
@@ -180,7 +220,7 @@ def get_card_reverse(current_score, last_card, my_scored_cards, score_weights):
     if not my_scored_cards[current_score] == []:
         i = 0
         for eachCard in my_scored_cards[current_score]:
-            if eachCard[-1] > MIN_SCORE and eachCard != last_card:
+            if int(statistics.mean(eachCard[-3])) > MIN_SCORE and eachCard != last_card:
                 selected = True
                 num = i
                 current_card = eachCard
@@ -194,7 +234,7 @@ def get_card_reverse(current_score, last_card, my_scored_cards, score_weights):
         while current_score > 0 and not selected:
             i = 0
             for eachCard in my_scored_cards[current_score]:
-                if eachCard[-1] > MIN_SCORE and eachCard != last_card:
+                if int(statistics.mean(eachCard[-3])) > MIN_SCORE and eachCard != last_card:
                     selected = True
                     num = i
                     current_card = eachCard
@@ -209,7 +249,7 @@ def get_card_reverse(current_score, last_card, my_scored_cards, score_weights):
             while current_score < len(my_scored_cards) and not selected:
                 i = 0
                 for eachCard in my_scored_cards[current_score]:
-                    if eachCard[-1] > MIN_SCORE and eachCard != last_card:
+                    if int(statistics.mean(eachCard[-3])) > MIN_SCORE and eachCard != last_card:
                         selected = True
                         num = i
                         current_card = eachCard
@@ -227,6 +267,210 @@ def get_card_reverse(current_score, last_card, my_scored_cards, score_weights):
         state = "ERROR"
             
     return current_score, current_card, state, num
+
+
+
+def read_table_RW(filepath_or_buffer, delimiter="\t",encoding = "UTF-16"):
+    x = read_table(filepath_or_buffer=filepath_or_buffer, delimiter=delimiter,encoding = encoding)
+
+    print("loading")
+
+    x = x.groupby(KANJI_HEADER, as_index=False).agg(RW_AG_COlUMNS)
+
+    return x
+
+
+def load_reading_dictionary(filename, sep = "\t"):
+    x = read_table_RW(filepath_or_buffer=filename, delimiter=sep)
+    
+    dictionary = {}
+
+    for number in range(0,MAX_SCORE):
+        dictionary[number] = []
+
+    i = 1
+    for index, row in x.iterrows():
+       # print(row)
+        this_score = int(statistics.mean(row[R_SCORE_HEADER]))
+        dictionary[this_score].append([row[R_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[L_SCORE_HEADER],row[S_SCORE_HEADER],row[W_SCORE_HEADER]])
+        i = i + 1
+
+    score_weights = update_weights(dictionary, i)
+    return dictionary, score_weights, i
+
+def export_readingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding = "UTF-16"):
+    score_table = format_to_table_reading(scored_dict)    
+
+   # print(score_table)
+
+    score_table = score_table.explode([KANJI_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,L_SCORE_HEADER,S_SCORE_HEADER,W_SCORE_HEADER])
+
+    score_table.to_csv(filename, sep = delimiter,encoding = encoding)
+
+def format_to_table_reading(scored_dictionary):
+    values = {}
+    i = 0
+    for eachScore in scored_dictionary.keys():
+        for eachCard in scored_dictionary[eachScore]:
+           # print(eachCard)
+            thisRow = eachCard
+            thisRow.append(str(eachScore))
+            values.update({i:thisRow})
+            i = i + 1
+    return(pd.DataFrame(values.values(),columns=[KANJI_HEADER,R_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,L_SCORE_HEADER,S_SCORE_HEADER,W_SCORE_HEADER,R_SCORE_HEADER]))
+
+def get_card_reading(current_score, last_card, my_scored_cards, score_weights):
+   # print(current_score)
+    #print(last_score)
+    num = 0
+    selected= False
+    if not my_scored_cards[current_score] == []:
+        i = 0
+        for eachCard in my_scored_cards[current_score]:
+            if int(statistics.mean(eachCard[-2])) > MIN_SCORE and eachCard != last_card:
+                selected = True
+                num = i
+                current_card = eachCard
+                break
+            i = i + 1
+    if selected==True:
+        pass
+    else:#README Something wrong here
+        selected = False
+        #print(max(my_scored_cards.keys()))
+        while current_score > 0 and not selected:
+            i = 0
+            for eachCard in my_scored_cards[current_score]:
+                if int(statistics.mean(eachCard[-2])) > MIN_SCORE and eachCard != last_card:
+                    selected = True
+                    num = i
+                    current_card = eachCard
+                    break
+                i = i + 1
+            if selected == True:
+                break
+            else:
+                current_score = current_score - 1
+        
+        if selected == False:
+            while current_score < len(my_scored_cards) and not selected:
+                i = 0
+                for eachCard in my_scored_cards[current_score]:
+                    if int(statistics.mean(eachCard[-2])) > MIN_SCORE and eachCard != last_card:
+                        selected = True
+                        num = i
+                        current_card = eachCard
+                        break
+                    i = i + 1
+                if selected == True:
+                    break
+                else:
+                    current_score = current_score + 1
+    if selected == True:
+        state = "GOOD"
+    else:
+        current_card = "ERROR"
+        current_score = None
+        state = "ERROR"
+            
+    return current_score, current_card, state, num
+
+
+def load_writing_dictionary(filename, sep = "\t"):
+    x = read_table_RW(filepath_or_buffer=filename, delimiter=sep)
+    
+    dictionary = {}
+
+    for number in range(0,MAX_SCORE):
+        dictionary[number] = []
+
+    i = 1
+    for index, row in x.iterrows():
+       # print(row)
+        this_score = int(statistics.mean(row[W_SCORE_HEADER]))
+        dictionary[this_score].append([row[R_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[L_SCORE_HEADER],row[S_SCORE_HEADER],row[R_SCORE_HEADER]])
+        i = i + 1
+
+    score_weights = update_weights(dictionary, i)
+    return dictionary, score_weights, i
+
+def export_writingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding = "UTF-16"):
+    score_table = format_to_table_writing(scored_dict)    
+
+   # print(score_table)
+
+    score_table = score_table.explode([KANJI_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,L_SCORE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER])
+
+    score_table.to_csv(filename, sep = delimiter,encoding = encoding)
+
+def format_to_table_writing(scored_dictionary):
+    values = {}
+    i = 0
+    for eachScore in scored_dictionary.keys():
+        for eachCard in scored_dictionary[eachScore]:
+           # print(eachCard)
+            thisRow = eachCard
+            thisRow.append(str(eachScore))
+            values.update({i:thisRow})
+            i = i + 1
+    return(pd.DataFrame(values.values(),columns=[KANJI_HEADER,R_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,L_SCORE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER]))
+
+def get_card_writing(current_score, last_card, my_scored_cards, score_weights):
+   # print(current_score)
+    #print(last_score)
+    num = 0
+    selected= False
+    if not my_scored_cards[current_score] == []:
+        i = 0
+        for eachCard in my_scored_cards[current_score]:
+            if int(statistics.mean(eachCard[-1])) > MIN_SCORE and eachCard != last_card:
+                selected = True
+                num = i
+                current_card = eachCard
+                break
+            i = i + 1
+    if selected==True:
+        pass
+    else:#README Something wrong here
+        selected = False
+        #print(max(my_scored_cards.keys()))
+        while current_score > 0 and not selected:
+            i = 0
+            for eachCard in my_scored_cards[current_score]:
+                if int(statistics.mean(eachCard[-1])) > MIN_SCORE and eachCard != last_card:
+                    selected = True
+                    num = i
+                    current_card = eachCard
+                    break
+                i = i + 1
+            if selected == True:
+                break
+            else:
+                current_score = current_score - 1
+        
+        if selected == False:
+            while current_score < len(my_scored_cards) and not selected:
+                i = 0
+                for eachCard in my_scored_cards[current_score]:
+                    if int(statistics.mean(eachCard[-1])) > MIN_SCORE and eachCard != last_card:
+                        selected = True
+                        num = i
+                        current_card = eachCard
+                        break
+                    i = i + 1
+                if selected == True:
+                    break
+                else:
+                    current_score = current_score + 1
+    if selected == True:
+        state = "GOOD"
+    else:
+        current_card = "ERROR"
+        current_score = None
+        state = "ERROR"
+            
+    return current_score, current_card, state, num
+
 
 def update_weights(dictionary, i):
     

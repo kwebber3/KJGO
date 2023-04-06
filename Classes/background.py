@@ -4,24 +4,25 @@ import random
 
 MAX_SCORE = 6000
 START_SCORE = 1
+
+'''
 JAPANESE_HEADER = "Japanese"
+'''
+KANJI_HEADER = "Kanji"
+R_HEADER = "Reading"
 ENGLISH_HEADER = "English"
-JP_SENTENCE_HEADER = "Japanese Example"
+K_SENTENCE_HEADER = "Japanese Example"
+JP_SENTENCE_HEADER = "Example Reading"
 ENG_SENTENCE_HEADER = "English Sentence"
 L_SCORE_HEADER = "listening score"
 S_SCORE_HEADER = "speaking score"
-
-KANJI_HEADER = "Kanji"
-R_HEADER = "Reading"
 R_SCORE_HEADER = "reading score"
 W_SCORE_HEADER = "writing score"
-E_SENT_HEADER = "Example Sentence"
-E_SENT_R_HEADER = "Example Sentence Reading"
 
 MIN_SCORE = 7
 
 def load_listening_dictionary(filename, sep = "\t"):
-    x = read_table(filepath_or_buffer=filename, delimiter=sep)
+    x = read_table_LS(filepath_or_buffer=filename, delimiter=sep)
     
     dictionary = {}
 
@@ -31,11 +32,12 @@ def load_listening_dictionary(filename, sep = "\t"):
     i = 1
     for index, row in x.iterrows():
         this_score = row[L_SCORE_HEADER]
-        dictionary[this_score].append([row[JAPANESE_HEADER],row[ENGLISH_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[S_SCORE_HEADER]])
+        dictionary[this_score].append([row[KANJI_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[S_SCORE_HEADER],row[R_SCORE_HEADER],row[W_SCORE_HEADER]])
         i = i + 1
 
     score_weights = update_weights(dictionary, i)
     return dictionary, score_weights, i
+
 def export_listeningLibrary_to_txt(scored_dict,filename,delimiter ="\t"):
     score_table = format_to_table_listening(scored_dict)
     score_table.to_csv(filename, sep = delimiter)
@@ -238,7 +240,6 @@ def get_card_reverse(current_score, last_card, my_scored_cards, score_weights):
             i = i + 1
     if selected==True:
     	pass
-    
     else:#README Something wrong here
         selected = False
         #print(max(my_scored_cards.keys()))

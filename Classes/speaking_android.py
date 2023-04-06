@@ -20,10 +20,10 @@ from background_android import *
 
 DICTIONARY_NAME = "User_Loaded.txt"
 
-JP_INDEX = 0
-ENG_INDEX = 1
-JP_SENT_INDEX = 2
-ENG_SENT_INDEX = 3
+JP_INDEX = 1
+ENG_INDEX = 2
+JP_SENT_INDEX = 4
+ENG_SENT_INDEX = 5
 
 class SpeakingBox(BoxLayout,):
     def build(self):
@@ -89,16 +89,17 @@ class SpeakingBox(BoxLayout,):
     def GetCard(self):
         self.score_weights = update_weights(self.my_scored_cards, self.number_of_cards)
         self.current_score = random.choices(range(1,len(self.score_weights)+1),weights = self.score_weights)[0]
-        self.current_score, self.current_card, status, self.index = get_card_reverse(self.current_score,self.last_card,self.my_scored_cards, self.score_weights)
+        self.current_score, self.current_card, status, self.index = get_card_speaking(self.current_score,self.last_card,self.my_scored_cards, self.score_weights)
         self.saved = False
         
         if status == "GOOD":
             English = self.current_card[ENG_INDEX]
             self.cardPrompt.text = English
-            self.Japanese = re.sub("@","\n",self.current_card[JP_INDEX])
-            self.English_Example = re.sub("@","\n",self.current_card[ENG_SENT_INDEX])
-            self.Japanese_Sentence = re.sub("@","\n",self.current_card[JP_SENT_INDEX])
+            self.Japanese = '\n'.join(self.current_card[JP_INDEX])
+            self.Japanese_Sentence = '\n'.join(self.current_card[JP_SENT_INDEX])
+            self.English_Example = '\n'.join(self.current_card[ENG_SENT_INDEX])
             self.Japanese_Sentence = re.sub("<[/]*b>","",self.Japanese_Sentence)
+
 
         elif status == "ERROR":
             self.cardPrompt.text = "PRACTICE LISTENING MORE"

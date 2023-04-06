@@ -28,9 +28,9 @@ R_EXP_INDEX = 4
 ENG_SENT_INDEX = 5
 
 
-class ReadingBox(BoxLayout,):
+class WritingBox(BoxLayout,):
     def build(self):
-        self.my_scored_cards, self.score_weights, self.number_of_cards = load_reading_dictionary(DICTIONARY_NAME)      
+        self.my_scored_cards, self.score_weights, self.number_of_cards = load_writing_dictionary(DICTIONARY_NAME)      
         self.last_score = -1
         self.last_card = []
         self.orientation = "vertical"
@@ -76,24 +76,24 @@ class ReadingBox(BoxLayout,):
 
 
     def SaveResults(self):
-        export_readingLibrary_to_txt(self.my_scored_cards,DICTIONARY_NAME)
+        export_writingLibrary_to_txt(self.my_scored_cards,DICTIONARY_NAME)
 
     def GetCard(self):
         self.score_weights = update_weights(self.my_scored_cards, self.number_of_cards)
         self.current_score = random.choices(range(1,len(self.score_weights)+1),weights = self.score_weights)[0]
-        self.current_score, self.current_card, status, self.index = get_card_reading(self.current_score,self.last_card,self.my_scored_cards, self.score_weights)
+        self.current_score, self.current_card, status, self.index = get_card_writing(self.current_score,self.last_card,self.my_scored_cards, self.score_weights)
         self.saved = False
         
         if status == "GOOD":
-            Japanese = self.current_card[JP_INDEX]
+            Japanese = self.current_card[R_INDEX]
             self.cardPrompt.text = Japanese
             self.English = '\n'.join(self.current_card[ENG_INDEX])
             self.Japanese_Sentence = '\n'.join(self.current_card[R_EXP_INDEX])
-            self.KanjiReadings = '\n'.join(self.current_card[R_INDEX])
+            self.Kanji = '\n'.join(self.current_card[JP_INDEX])
             self.English_Example = '\n'.join(self.current_card[ENG_SENT_INDEX])
             self.Japanese_Sentence = re.sub("<[/]*b>","",self.Japanese_Sentence)
-            self.Kanji_Example = '\n'.join(self.current_card[K_SENTENCE_HEADER])
-            self.Kanji_Example = re.sub("<[/]*b>","",self.Kanji_Example)
+            self.Kanji_Sentence = '\n'.join(self.current_card[JP_SENT_INDEX])
+            self.Kanji_Sentence = re.sub("<[/]*b>","",self.Kanji_Sentence)
 
 
         elif status == "ERROR":
@@ -101,8 +101,8 @@ class ReadingBox(BoxLayout,):
             self.Japanese = ""
             self.English_Example = ""
             self.Japanese_Sentence = ""
-            self.KanjiReadings = ""
-            self.Kanji_Example = ""
+            self.Kanji = ""
+            self.Kanji_Sentence = ""
             self.addButton.disabled = True
             self.subtractButton.disabled = True
         else:
@@ -110,8 +110,8 @@ class ReadingBox(BoxLayout,):
             self.Japanese = ""
             self.English_Example = ""
             self.Japanese_Sentence = ""
-            self.KanjiReadings = ""
-            self.Kanji_Example = ""
+            self.Kanji = ""
+            self.Kanji_Sentence = ""
             self.addButton.disabled = True
             self.subtractButton.disabled = True
 
@@ -123,10 +123,10 @@ class ReadingBox(BoxLayout,):
         self.reading.text = ""
 
     def ShowExample(self, instance):
-        self.example.text = self.Kanji_Example
+        self.example.text = self.Kanji_Sentence
 
     def ShowAnswer(self, instance):
-        self.reading.text = self.KanjiReadings
+        self.reading.text = self.Kanji
         self.answer.text = self.English
         self.sentence_answer.text = self.English_Sentence
 
@@ -140,6 +140,7 @@ class ReadingBox(BoxLayout,):
         self.my_scored_cards[new_score].append(this_card)
         self.refresh()
         self.last_score = new_score
+        self.last_card = this_card
         self.GetCard()
     
     def SubtractPoint(self, instance):
@@ -152,5 +153,6 @@ class ReadingBox(BoxLayout,):
         self.my_scored_cards[new_score].append(this_card)
         self.refresh()
         self.last_score = new_score
+        self.last_card = this_card
         self.GetCard()
         #print(this_card)
