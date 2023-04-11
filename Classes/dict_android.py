@@ -25,7 +25,7 @@ ANDROID_KEY = "posix"
 if OPERATING_SYSTEM == ANDROID_KEY:
     from android.storage import app_storage_path
     app_storage_directory_path = app_storage_path()
-    USER_FILENAME =  app_storage_directory_path+"User_Loaded.txt"
+    USER_FILENAME =  app_storage_directory_path+"/User_Loaded.txt"
 else:
     USER_FILENAME = "../User_Loaded.txt"
 
