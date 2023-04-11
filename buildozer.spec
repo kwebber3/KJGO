@@ -37,14 +37,14 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy,pandas,plyer,gtts,jisho_api,pydub,requests,urllib3,charset_normalizer,chardet,idna,pydantic==1.8.2 --only-binary=:all:,rich,markdown-it-py,mdurl,pygments,click,bs4
+requirements = python3,kivy,pandas==1.5.3,plyer,gtts,jisho_api,pydub,requests,urllib3,charset_normalizer,chardet,idna,pydantic==1.8.2 --only-binary=:all:,rich,markdown-it-py,mdurl,pygments,click,bs4
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-#presplash.filename = %(source.dir)s/data/presplash.png
+#presplash.filename = splash.png
 
 # (str) Icon of the application
 icon.filename = jbjs.png
