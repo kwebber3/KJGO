@@ -27,8 +27,9 @@ if OPERATING_SYSTEM == ANDROID_KEY:
     from android.storage import app_storage_path
     app_storage_directory_path = app_storage_path()
     DICTIONARY_NAME =  app_storage_directory_path+"/User_Loaded.txt"
-    x = read_table(filepath_or_buffer="User_Loaded.txt", delimiter="\t",encoding = "UTF-16")
-    x.to_csv(DICTIONARY_NAME, sep = "\t",encoding = "UTF-16",index=False)
+    if os.path.isfile(DICTIONARY_NAME):
+        x = read_table(filepath_or_buffer="User_Loaded.txt", delimiter="\t",encoding = "UTF-16")
+        x.to_csv(DICTIONARY_NAME, sep = "\t",encoding = "UTF-16",index=False)
 else:
     DICTIONARY_NAME = "../User_Loaded.txt"
 
