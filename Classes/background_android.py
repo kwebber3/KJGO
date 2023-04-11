@@ -81,9 +81,27 @@ def export_listeningLibrary_to_txt(scored_dict,filename,delimiter ="\t", encodin
 
    # print(score_table)
 
-    score_table = score_table.explode([KANJI_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER])
+    #score_table = score_table.explode([KANJI_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER])
 
-    score_table.to_csv(filename, sep = delimiter,encoding = encoding,index=False)
+    ##Let us say list_cols are the columns to be exploded
+    list_cols = {KANJI_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER}
+    other_cols = list(set(score_table.columns) - set(list_cols))
+    ##other_cols now contains all the remaining column names in the df
+    ##we temporarily convert to set() to easily get the differences in 2 lists
+    ##now explode the list_cols using a loop
+    exploded = [score_table[col].explode() for col in list_cols]
+    ##now we have long list of exploded values. Print to see the format
+    ##This statement creates pairs of the exploded cols
+    ##zip command is used to create the pairs
+    ##dict puts it in an appropriate format from which a dataframe can be created
+    ##Please print the individual outputs of each command to understand the flow
+    df2 = pd.DataFrame(dict(zip(list_cols, exploded)))
+    ##Now merge back the other_cols as well
+    df2 = score_table[other_cols].merge(df2, how="right", left_index=True, right_index=True)
+    ##lastly, re-create the original column order
+    df2 = df2.loc[:, score_table.columns]
+
+    df2.to_csv(filename, sep = delimiter,encoding = encoding,index=False)
 
 def format_to_table_listening(scored_dictionary):
     values = {}
