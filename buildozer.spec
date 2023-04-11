@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = Junban AnkiJisho 
+title = Junki Jisho 
 
 # (str) Package name
 package.name = junbanankijisho
