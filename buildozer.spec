@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy,pandas,statistics,plyer,gtts,jisho_api,pydub,requests,urllib3,charset_normalizer,chardet,idna,pydantic,rich,markdown-it-py,mdurl,pygments,click
+requirements = python3,kivy,pandas,plyer,gtts,jisho_api,pydub,requests,urllib3,charset_normalizer,chardet,idna,pydantic==1.8.2 --only-binary=:all:,rich,markdown-it-py,mdurl,pygments,click,bs4
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -283,7 +283,7 @@ android.private_storage = True
 
 # (list) The Android archs to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
 # In past, was `android.arch` as we weren't supporting builds for multiple archs at the same time.
-android.archs = arm64-v8a, armeabi-v7a
+android.archs = arm64-v8a
 
 # (int) overrides automatic versionCode computation (used in build.gradle)
 # this is not the same as app version and should only be edited if you know what you're doing
@@ -318,10 +318,10 @@ android.allow_backup = True
 #p4a.url =
 
 # (str) python-for-android fork to use in case if p4a.url is not specified, defaults to upstream (kivy)
-p4a.fork = misl6
+#p4a.fork = misl6
 
 # (str) python-for-android branch to use, defaults to master try to use suggestions
-p4a.branch = fix/android-IME 
+#p4a.branch = fix/android-IME 
 
 # (str) python-for-android specific commit to use, defaults to HEAD, must be within p4a.branch
 #p4a.commit = HEAD
@@ -350,6 +350,7 @@ p4a.branch = fix/android-IME
 
 # (str) extra command line arguments to pass when invoking pythonforandroid.toolchain
 #p4a.extra_args =
+
 
 
 
