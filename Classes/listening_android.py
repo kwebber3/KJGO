@@ -23,15 +23,21 @@ import os
 
 from background_android import *
 
-DICTIONARY_NAME = "../User_Loaded.txt"
+OPERATING_SYSTEM = os.name
+WINDOWS_KEY = "nt"
+ANDROID_KEY = "posix"
+
+if OPERATING_SYSTEM == ANDROID_KEY:
+    from android.storage import app_storage_path
+    app_storage_directory_path = app_storage_path()
+    DICTIONARY_NAME =  app_storage_directory_path+"User_Loaded.txt"
+else:
+    DICTIONARY_NAME = "../User_Loaded.txt"
 
 JP_INDEX = 1
 ENG_INDEX = 2
 JP_SENT_INDEX = 4
 ENG_SENT_INDEX = 5
-
-WINDOWS_KEY = "nt"
-ANDROID_KEY = "posix"
 
 class ListeningBox(BoxLayout,):
     def build(self):

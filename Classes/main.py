@@ -17,6 +17,20 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from functools import partial
+import os
+
+OPERATING_SYSTEM = os.name
+WINDOWS_KEY = "nt"
+ANDROID_KEY = "posix"
+
+if OPERATING_SYSTEM == ANDROID_KEY:
+    from android.storage import app_storage_path
+    app_storage_directory_path = app_storage_path()
+    DICTIONARY_NAME =  app_storage_directory_path+"User_Loaded.txt"
+else:
+    DICTIONARY_NAME = "../User_Loaded.txt"
+
+
 # Create both screens. Please note the root.manager.current: this is how
 # you can control the ScreenManager from kv. Each screen has by default a
 # property manager that gives you the instance of the ScreenManager used.

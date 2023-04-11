@@ -16,6 +16,19 @@ import pandas as pd
 
 from jisho_api.word import Word
 from jisho_api.sentence import Sentence
+import os
+
+OPERATING_SYSTEM = os.name
+WINDOWS_KEY = "nt"
+ANDROID_KEY = "posix"
+
+if OPERATING_SYSTEM == ANDROID_KEY:
+    from android.storage import app_storage_path
+    app_storage_directory_path = app_storage_path()
+    USER_FILENAME =  app_storage_directory_path+"User_Loaded.txt"
+else:
+    USER_FILENAME = "../User_Loaded.txt"
+
 KANJI_HEADER = "Kanji"
 R_HEADER = "Reading"
 ENGLISH_HEADER = "English"
@@ -27,7 +40,6 @@ S_SCORE_HEADER = "speaking score"
 R_SCORE_HEADER = "reading score"
 W_SCORE_HEADER = "writing score"
 
-USER_FILENAME = "../User_Loaded.txt"
 
 class AddButton(Button):
     def __init__(self, Entry, **kwargs):
@@ -192,7 +204,7 @@ class SearchBoxPage(BoxLayout):
                 elif len(sent_entry)>0:
                     sent_entry = sent_entry.dict()["data"]
                     current_dict[ENG_SENTENCE_HEADER] = sent_entry[0]["en_translation"]
-                    #Remove Kanji and leave blanks as furigana are wierd sometimes
+                    #Remove Kanji and leave blanks as furigana are weird sometimes
                     
                     x = re.sub("[\u3300-\u33ff]","_",sent_entry[0]["japanese"])
                     x = re.sub("[\ufe30-\ufe4f]","_",x)
