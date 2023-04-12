@@ -49,7 +49,7 @@ class AddButton(Button):
 
 class SearchResult(BoxLayout):
     entry = DictProperty()
-    on_press = ObjectProperty()
+    on_release = ObjectProperty()
 
     def on_entry(self, instance, new_obj):
         # handle the DictProperty named show
@@ -72,10 +72,10 @@ class SearchResult(BoxLayout):
                 self.myColor = (0,0,1,1)
             
             i = 0
-            #print(self.on_press)
+            #print(self.on_release)
             jbox = BoxLayout(orientation = "vertical", size_hint_x = 2)
             ebox = BoxLayout(orientation = "vertical", size_hint_x = 2)  
-            button = Button(on_press = self.on_press, text = "Make Flashcard")  
+            button = Button(on_release = self.on_release, text = "Make Flashcard")  
            # print("cat")
 
             for eachForm in dict(self.entry)["japanese"]:
@@ -235,7 +235,7 @@ class SearchBoxPage(BoxLayout):
                 current_dict[ENGLISH_HEADER] = eng[1:]
             else:
                 print("not enough definitions for this form")
-            
+                current_dict[ENGLISH_HEADER] = eng
             new_lines = pd.concat([new_lines, current_dict])
             i = i + 1
 
@@ -252,7 +252,7 @@ class SearchBoxPage(BoxLayout):
             for eachEntry in answer:
                 self.eachEntry = eachEntry
                 current = partial(self.makeFlashCard,self.eachEntry)
-                new_data.append({"on_press": current,"entry": self.eachEntry, })
+                new_data.append({"on_release": current,"entry": self.eachEntry, })
               #  print(type(self.eachEntry))
             
         print("cow")
@@ -265,7 +265,7 @@ class SearchBoxPage(BoxLayout):
         self.searchbar = BoxLayout(orientation = "horizontal", size_hint_y = 0.5)
         self.searchBox = TextInput(font_name = "TakaoMincho",keyboard_suggestions=True,write_tab=False)
         self.resultsBox = ResultsView()
-        self.mySearchBtn = Button(text = "Search", on_press = partial(self.search), size_hint_x = 0.2, background_color = (1,0,1,1))
+        self.mySearchBtn = Button(text = "Search", on_release = partial(self.search), size_hint_x = 0.2, background_color = (1,0,1,1))
         self.searchbar.add_widget(self.searchBox)
         self.searchbar.add_widget(self.mySearchBtn)
        # self.mybox.add_widget(SearchResult(Word.request("cow").dict()["data"][0])) #test

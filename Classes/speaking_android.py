@@ -41,16 +41,16 @@ class SpeakingBox(BoxLayout,):
         self.last_card = []
         self.orientation = "vertical"
         self.buttonBar = BoxLayout(orientation = "horizontal")
-        self.show_button = Button(text="Example", on_press=partial(self.ShowExample))
+        self.show_button = Button(text="Example", on_release=partial(self.ShowExample))
         self.buttonBar.add_widget(self.show_button)
 
-        self.answer_button = Button(text="Answer", on_press=partial(self.ShowAnswer))
+        self.answer_button = Button(text="Answer", on_release=partial(self.ShowAnswer))
         self.buttonBar.add_widget(self.answer_button)
 
-        self.addButton = Button(text="Correct", on_press=partial(self.AddPoint))
+        self.addButton = Button(text="Correct", on_release=partial(self.AddPoint))
         self.buttonBar.add_widget(self.addButton)
 
-        self.subtractButton = Button(text="Wrong", on_press=partial(self.SubtractPoint))
+        self.subtractButton = Button(text="Wrong", on_release=partial(self.SubtractPoint))
         self.buttonBar.add_widget(self.subtractButton)
 
         
@@ -69,7 +69,7 @@ class SpeakingBox(BoxLayout,):
         self.add_widget(self.sentence_answer)
         self.sentence_answer.bind(size=self.sentence_answer.setter('text_size'))    
         '''
-        self.endButton = Button(text = "Save & Quit", on_press = self.save_func)
+        self.endButton = Button(text = "Save & Quit", on_release = self.save_func)
         self.add_widget(self.endButton)
         '''
 

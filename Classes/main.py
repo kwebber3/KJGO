@@ -43,10 +43,10 @@ Builder.load_string("""
         orientation: "vertical"
         Button:
             text: 'Go to Dictionary'
-            on_press: root.manager.current = 'search_page'
+            on_release: root.manager.current = 'search_page'
         Button:
             text: 'Go to Flashcards'
-            on_press: root.manager.current = 'learn_page'
+            on_release: root.manager.current = 'learn_page'
 
 <SearchPage>:
     name: "search_page"
@@ -57,16 +57,16 @@ Builder.load_string("""
         orientation: "vertical"
         Button:
             text: "Listening"
-            on_press: root.manager.current = "listening_page"
+            on_release: root.manager.current = "listening_page"
         Button:
             text: "Speaking"
-            on_press: root.manager.current = "speaking_page"
+            on_release: root.manager.current = "speaking_page"
         Button:
             text: "Reading"
-            on_press: root.manager.current = "reading_page"
+            on_release: root.manager.current = "reading_page"
         Button:
             text: "Writing"
-            on_press: root.manager.current = "writing_page"
+            on_release: root.manager.current = "writing_page"
 
 <ListeningPage>
     name: "listening_page"
