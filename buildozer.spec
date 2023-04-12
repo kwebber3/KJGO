@@ -44,7 +44,7 @@ requirements = python3,kivy,pandas,plyer,gtts,jisho_api,pydub,requests,urllib3,c
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-#presplash.filename = splash.png
+presplash.filename = splash.png
 
 # (str) Icon of the application
 icon.filename = jbjs.png
