@@ -234,8 +234,8 @@ class SearchBoxPage(BoxLayout):
                     eng = eng + "," + eachDef
                 current_dict[ENGLISH_HEADER] = eng[1:]
             else:
-                print("not enough definitions for this form")
-                current_dict[ENGLISH_HEADER] = eng
+                print("not enough definitions for this form, adding nothing")
+                current_dict[ENGLISH_HEADER] = " "
             new_lines = pd.concat([new_lines, current_dict])
             i = i + 1
 
