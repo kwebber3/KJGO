@@ -164,7 +164,7 @@ def get_card(current_score, last_score, my_scored_cards, score_weights):
             #print("This is " + str(current_score) + "not" + str(last_score))
         elif selected == False and my_scored_cards[START_SCORE] == []:
             current_score = START_SCORE
-            if len(my_scored_cards[START_SCORE]> 1):
+            if len(my_scored_cards[START_SCORE])> 1:
                 num = random.randrange(0, len(my_scored_cards[START_SCORE])-1,1)
             else:
                 num = 0
