@@ -132,28 +132,28 @@ def get_card(current_score, last_score, my_scored_cards, score_weights):
         
         while current_score < len(score_weights) - 1 and not selected:
             current_score = current_score + 1
-            if current_score != last_score and not my_scored_cards[current_score] == []:
+            if current_score != last_score and my_scored_cards[current_score] != []:
                 if len(my_scored_cards[current_score]) > 1:
                     num = random.randrange(0, len(my_scored_cards[current_score])-1,1)
                 else:
                     num = 0
                 current_card = my_scored_cards[current_score][num]
                 selected = True
-        if selected == False and not my_scored_cards[START_SCORE] == []:
+        if selected == False and my_scored_cards[START_SCORE] != []:
             if len(my_scored_cards[START_SCORE]) > 1:
                 num = random.randrange(0, len(my_scored_cards[START_SCORE])-1,1)
             else:
                 num = 0
             current_card = my_scored_cards[START_SCORE][num]
             current_score = START_SCORE
-        elif selected == False and not my_scored_cards[MAX_SCORE-1] == []:
+        elif selected == False and my_scored_cards[MAX_SCORE-1] != []:
             if len(my_scored_cards[MAX_SCORE-1]) > 1:
                 num = random.randrange(0, len(my_scored_cards[MAX_SCORE-1])-1,1)
             else:
                 num = 0
             current_card = my_scored_cards[MAX_SCORE-1][num]           
             current_score = MAX_SCORE-1
-        elif (selected == False and last_score != 0) and not my_scored_cards[0] == []:
+        elif (selected == False and last_score != 0) and my_scored_cards[0] != []:
             if len(my_scored_cards[0]) > 1:
                 num = random.randrange(0, len(my_scored_cards[0])-1,1) 
             else:
@@ -162,7 +162,7 @@ def get_card(current_score, last_score, my_scored_cards, score_weights):
             current_score = 0
             selected = True
             #print("This is " + str(current_score) + "not" + str(last_score))
-        elif selected == False and my_scored_cards[START_SCORE] == []:
+        elif selected == False and my_scored_cards[START_SCORE] != []:
             current_score = START_SCORE
             if len(my_scored_cards[START_SCORE])> 1:
                 num = random.randrange(0, len(my_scored_cards[START_SCORE])-1,1)
