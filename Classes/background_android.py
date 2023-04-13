@@ -179,7 +179,7 @@ def get_card(current_score, last_score, my_scored_cards, score_weights):
             current_card = my_scored_cards[last_score][num]
             current_score = last_score
             #print("***")
-    if (current_score == last_score) and len(my_scored_cards[last_score]) == 1:
+    if (current_score == last_score) and len(my_scored_cards[last_score]) == 1 and len(my_scored_cards[0]) > 0:
             if len(my_scored_cards[0]) > 1:
                 num = random.randrange(0, len(my_scored_cards[0])-1,1) 
             else:
