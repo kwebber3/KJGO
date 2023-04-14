@@ -102,6 +102,7 @@ class FilePage(Screen):
 
 
 
+
 OPERATING_SYSTEM = os.name
 WINDOWS_KEY = "nt"
 ANDROID_KEY = "posix"
@@ -109,6 +110,8 @@ if OPERATING_SYSTEM == ANDROID_KEY:
     from android.storage import app_storage_path
     app_storage_directory_path = app_storage_path()
     USER_FILENAME =  app_storage_directory_path+"/User_Loaded.txt"
+    from android.permissions import request_permissions, Permission
+    request_permissions([Permission.WRITE_EXTERNAL_STORAGE])
     USER_PATH = "/storage/emulated/0/"
     if not os.path.isfile(DICTIONARY_NAME):
         x = read_table(filepath_or_buffer="User_Loaded.txt", delimiter="\t",encoding = "UTF-16")
