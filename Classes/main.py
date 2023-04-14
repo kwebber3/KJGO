@@ -31,12 +31,17 @@ import os
 class LoadDialog(FloatLayout):
     load = ObjectProperty(None)
     cancel = ObjectProperty(None)
-
+    def __init__(self, **kwargs):
+        super(LoadDialog, self).__init__(**kwargs)
+        self.user_path = USER_PATH
 
 class SaveDialog(FloatLayout):
     save = ObjectProperty(None)
     text_input = ObjectProperty(None)
     cancel = ObjectProperty(None)
+    def __init__(self, **kwargs):
+        super(SaveDialog, self).__init__(**kwargs)
+        self.user_path = USER_PATH
 
 
 class FilePage(Screen):
@@ -44,7 +49,8 @@ class FilePage(Screen):
     savefile = ObjectProperty(None)
     text_input = ObjectProperty(None)
     
-    def on_build(self):
+    def __init__(self, **kwargs):
+        super(FilePage, self).__init__(**kwargs)
         self.user_path = USER_PATH
 
     def dismiss_popup(self):
@@ -175,16 +181,18 @@ Builder.load_string("""
     name: "writing_page"  
 
 <LoadDialog>:
+    user_path: root.user_path
     BoxLayout:
         size: root.size
         pos: root.pos
         orientation: "vertical"
         FileChooserListView:
+            rootpath: root.user_path
             id: filechooser
 
         BoxLayout:
             size_hint_y: None
-            height: 30
+            height: 60
             Button:
                 text: "Cancel"
                 on_release: root.cancel()
@@ -195,6 +203,7 @@ Builder.load_string("""
 
 <SaveDialog>:
     text_input: text_input
+    user_path: root.user_path
     BoxLayout:
         size: root.size
         pos: root.pos
@@ -207,12 +216,12 @@ Builder.load_string("""
         TextInput:
             id: text_input
             size_hint_y: None
-            height: 30
+            height: 60
             multiline: False
 
         BoxLayout:
             size_hint_y: None
-            height: 30
+            height: 60
             Button:
                 text: "Cancel"
                 on_release: root.cancel()
