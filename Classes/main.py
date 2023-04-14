@@ -43,6 +43,9 @@ class FilePage(Screen):
     loadfile = ObjectProperty(None)
     savefile = ObjectProperty(None)
     text_input = ObjectProperty(None)
+    
+    def on_build(self):
+        self.user_path = USER_PATH
 
     def dismiss_popup(self):
         self._popup.dismiss()
@@ -96,16 +99,19 @@ class FilePage(Screen):
 OPERATING_SYSTEM = os.name
 WINDOWS_KEY = "nt"
 ANDROID_KEY = "posix"
-
 if OPERATING_SYSTEM == ANDROID_KEY:
     from android.storage import app_storage_path
     app_storage_directory_path = app_storage_path()
-    DICTIONARY_NAME =  app_storage_directory_path+"/User_Loaded.txt"
+    USER_FILENAME =  app_storage_directory_path+"/User_Loaded.txt"
+    USER_PATH = app_storage_directory_path
     if not os.path.isfile(DICTIONARY_NAME):
         x = read_table(filepath_or_buffer="User_Loaded.txt", delimiter="\t",encoding = "UTF-16")
         x.to_csv(DICTIONARY_NAME, sep = "\t",encoding = "UTF-16",index=False)
 else:
-    DICTIONARY_NAME = "../User_Loaded.txt"
+    USER_FILENAME = "../User_Loaded.txt"
+    USER_PATH = "../"
+DICTIONARY_NAME =  USER_FILENAME
+    
 
 
 # Create both screens. Please note the root.manager.current: this is how
@@ -195,6 +201,7 @@ Builder.load_string("""
         orientation: "vertical"
         FileChooserListView:
             id: filechooser
+            rootpath: root.user_path
             on_selection: text_input.text = self.selection and self.selection[0] or ''
 
         TextInput:
