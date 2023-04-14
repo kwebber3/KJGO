@@ -19,6 +19,80 @@ from kivy.uix.button import Button
 from functools import partial
 import os
 
+from kivy.uix.floatlayout import FloatLayout
+from kivy.properties import ObjectProperty
+from kivy.uix.popup import Popup
+
+import pandas as pd
+
+import os
+
+
+class LoadDialog(FloatLayout):
+    load = ObjectProperty(None)
+    cancel = ObjectProperty(None)
+
+
+class SaveDialog(FloatLayout):
+    save = ObjectProperty(None)
+    text_input = ObjectProperty(None)
+    cancel = ObjectProperty(None)
+
+
+class FilePage(Screen):
+    loadfile = ObjectProperty(None)
+    savefile = ObjectProperty(None)
+    text_input = ObjectProperty(None)
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
+
+    def show_load(self):
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Load file", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
+
+    def show_save(self):
+        content = SaveDialog(save=self.save, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Save file", content=content,
+                            size_hint=(0.9, 0.9))
+        self._popup.open()
+
+    def load(self, path, filename):
+        filepath = str(os.path.join(path, filename[0]))
+
+
+        x = read_table(filepath_or_buffer=filepath, delimiter="\t",encoding = "UTF-16")
+
+        columns_exist = True
+        for eachColumn in [KANJI_HEADER,R_HEADER,ENGLISH_HEADER,K_SENTENCE_HEADER,JP_SENTENCE_HEADER,ENG_SENTENCE_HEADER]:
+            if  not eachColumn in x.columns:
+                columns_exist = False
+        for eachScoreCol in [L_SCORE_HEADER,S_SCORE_HEADER,R_SCORE_HEADER,W_SCORE_HEADER]:
+            if  not eachScoreCol in x.columns:
+                x[eachScoreCol] = 0            
+
+        if columns_exist:
+            x.to_csv(USER_FILENAME, mode='a', header = False, sep="\t", encoding="UTF-16", index=False)
+        else: 
+            print("Error: Missing Column")
+
+        self.dismiss_popup()
+
+    def save(self, path, filename):
+        if len(filename) > 0:
+            filepath = str(os.path.join(path, filename))
+        else:
+            filepath = str(path)
+        x = read_table(filepath_or_buffer=USER_FILENAME, delimiter="\t",encoding = "UTF-16")
+
+        x.to_csv(filepath,sep="\t", encoding="UTF-16",index=False, header= True)
+
+        self.dismiss_popup()
+
+
+
 OPERATING_SYSTEM = os.name
 WINDOWS_KEY = "nt"
 ANDROID_KEY = "posix"
@@ -47,6 +121,9 @@ Builder.load_string("""
         Button:
             text: 'Go to Flashcards'
             on_release: root.manager.current = 'learn_page'
+        Button:
+            text: 'Load/Export Files'
+            on_release: root.manager.current = 'file_page'
 
 <SearchPage>:
     name: "search_page"
@@ -68,8 +145,19 @@ Builder.load_string("""
             text: "Writing"
             on_release: root.manager.current = "writing_page"
 
-<ListeningPage>
-    name: "listening_page"
+            
+<FilePage>
+    name: "file_page"
+    BoxLayout:
+        orientation: 'vertical'
+        Button:
+            text: 'Load'
+            on_release: root.show_load()
+        Button:
+            text: 'Save'
+            on_release: root.show_save()
+
+        
 
 <SpeakingPage>
     name: "speaking_page"    
@@ -80,6 +168,52 @@ Builder.load_string("""
 <WritingPage>
     name: "writing_page"  
 
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.load(filechooser.path, filechooser.selection)
+
+<SaveDialog>:
+    text_input: text_input
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+            on_selection: text_input.text = self.selection and self.selection[0] or ''
+
+        TextInput:
+            id: text_input
+            size_hint_y: None
+            height: 30
+            multiline: False
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            Button:
+                text: "Cancel"
+                on_release: root.cancel()
+
+            Button:
+                text: "Save"
+                on_release: root.save(filechooser.path, text_input.text)
+    
 """)
 
 # Declare both screens
@@ -88,6 +222,7 @@ class MenuScreen(Screen):
 
 class LearningMainPage(Screen):
     pass
+
 
 
 class ListeningPage(Screen):
@@ -132,6 +267,7 @@ class TestApp(App):
         self.sm.add_widget(SpeakingPage(name='speaking_page'))
         self.sm.add_widget(ReadingPage(name='reading_page'))
         self.sm.add_widget(WritingPage(name='writing_page'))
+        self.sm.add_widget(FilePage(name='file_page'))
         return self.sm
     
     def on_start(self):
@@ -145,7 +281,13 @@ class TestApp(App):
             elif self.sm.current == "speaking_page":
                 self.sm.get_screen("speaking_page").sbp.SaveResults()
                 self.sm.current = "learn_page"
-            else:
+            elif self.sm.current == "reading_page":
+                self.sm.get_screen("reading_page").rbp.SaveResults()
+                self.sm.current = "learn_page"
+            elif self.sm.current == "writing_page":
+                self.sm.get_screen("writing_page").wbp.SaveResults()
+                self.sm.current = "learn_page"            
+            else:#dictionary and file page
                 self.sm.current = "menu"
             return True
 
