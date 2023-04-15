@@ -73,7 +73,17 @@ class SpeakingBox(BoxLayout,):
         self.add_widget(self.endButton)
         '''
 
+
+        self.trashcard_button = Button(text="Trash Word Card", on_release=partial(self.TrashCard))
+        self.add_widget(self.trashcard_button)
         self.GetCard()
+
+    def TrashCard(self, instance):
+        #print(self.current_score)
+        self.my_scored_cards[self.current_score].pop(self.index)
+        self.trashcard_button.disabled = True
+        self.GetCard()
+        
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -111,7 +121,7 @@ class SpeakingBox(BoxLayout,):
             self.Japanese_Sentence = '\n'.join(self.current_card[JP_SENT_INDEX])
             self.English_Example = '\n'.join(self.current_card[ENG_SENT_INDEX])
             self.Japanese_Sentence = re.sub("<[/]*b>","",self.Japanese_Sentence)
-
+            self.trashcard_button.disabled = False
 
         elif status == "ERROR":
             self.cardPrompt.text = "PRACTICE LISTENING MORE"
@@ -120,6 +130,7 @@ class SpeakingBox(BoxLayout,):
             self.Japanese_Sentence = ""
             self.addButton.disabled = True
             self.subtractButton.disabled = True
+            self.trashcard_button.disabled = True
         else:
             self.cardPrompt.text = "Unknown Status"
             self.Japanese = ""

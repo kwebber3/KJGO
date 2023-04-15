@@ -73,6 +73,14 @@ class WritingBox(BoxLayout,):
         self.add_widget(self.sentence_answer)
         self.sentence_answer.bind(size=self.sentence_answer.setter('text_size'))    
 
+        self.trashcard_button = Button(text="Trash Word Card", on_release=partial(self.TrashCard))
+        self.add_widget(self.trashcard_button)
+        self.GetCard()
+        
+    def TrashCard(self, instance):
+        #print(self.current_score)
+        self.my_scored_cards[self.current_score].pop(self.index)
+        self.trashcard_button.disabled = True
         self.GetCard()
 
     def __init__(self, **kw):
@@ -105,6 +113,7 @@ class WritingBox(BoxLayout,):
             self.Japanese_Sentence = re.sub("<[/]*b>","",self.Japanese_Sentence)
             self.Kanji_Sentence = '\n'.join(self.current_card[JP_SENT_INDEX])
             self.Kanji_Sentence = re.sub("<[/]*b>","",self.Kanji_Sentence)
+            self.trashcard_button.disabled = False
 
 
         elif status == "ERROR":
@@ -116,6 +125,8 @@ class WritingBox(BoxLayout,):
             self.Kanji_Sentence = ""
             self.addButton.disabled = True
             self.subtractButton.disabled = True
+            self.trashcard_button.disabled = True
+
         else:
             self.cardPrompt.text = "Unknown Status"
             self.Japanese = ""

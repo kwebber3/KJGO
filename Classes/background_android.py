@@ -1,7 +1,6 @@
 from pandas import *
 import pandas as pd
 import random
-import statistics
 
 MAX_SCORE = 6000
 START_SCORE = 1
@@ -69,7 +68,7 @@ def load_listening_dictionary(filename, sep = "\t"):
     i = 1
     for index, row in x.iterrows():
        # print(row)
-        this_score = int(statistics.mean(row[L_SCORE_HEADER]))
+        this_score = int(max(row[L_SCORE_HEADER]))
         dictionary[this_score].append([row[KANJI_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[S_SCORE_HEADER],row[R_SCORE_HEADER],row[W_SCORE_HEADER]])
         i = i + 1
 
@@ -172,14 +171,19 @@ def get_card(current_score, last_score, my_scored_cards, score_weights):
         elif selected == True:
             pass
         else:
-            if len(my_scored_cards[last_score])>1:
-                num = random.randrange(0, len(my_scored_cards[last_score])-1,1)
-            else:
-                num = 0
-            current_card = my_scored_cards[last_score][num]
-            current_score = last_score
-            #print("***")
-    if (current_score == last_score) and len(my_scored_cards[last_score]) == 1 and len(my_scored_cards[0]) > 0:
+            if last_score != -1:
+                if len(my_scored_cards[last_score])>1:
+                    num = random.randrange(0, len(my_scored_cards[last_score])-1,1)
+                else:
+                    num = 0
+                current_card = my_scored_cards[last_score][num]
+                current_score = last_score
+                #print("***")
+            else: #last_score = -1
+                num = -1
+                current_card = None
+                current_score = -1
+    if current_score != -1 and (current_score == last_score) and len(my_scored_cards[last_score]) == 1 and len(my_scored_cards[0]) > 0:
             if len(my_scored_cards[0]) > 1:
                 num = random.randrange(0, len(my_scored_cards[0])-1,1) 
             else:
@@ -202,7 +206,7 @@ def load_speaking_dictionary(filename, sep = "\t"):
     i = 1
     for index, row in x.iterrows():
        # print(row)
-        this_score = int(statistics.mean(row[S_SCORE_HEADER]))
+        this_score = int(max(row[S_SCORE_HEADER]))
         dictionary[this_score].append([row[KANJI_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[L_SCORE_HEADER],row[R_SCORE_HEADER],row[W_SCORE_HEADER]])
         i = i + 1
 
@@ -257,7 +261,7 @@ def get_card_speaking(current_score, last_card, my_scored_cards, score_weights):
     if not my_scored_cards[current_score] == []:
         i = 0
         for eachCard in my_scored_cards[current_score]:
-            if int(statistics.mean(eachCard[-3])) > MIN_SCORE and eachCard != last_card:
+            if int(max(eachCard[-3])) > MIN_SCORE and eachCard != last_card:
                 selected = True
                 num = i
                 current_card = eachCard
@@ -271,7 +275,7 @@ def get_card_speaking(current_score, last_card, my_scored_cards, score_weights):
         while current_score > 0 and not selected:
             i = 0
             for eachCard in my_scored_cards[current_score]:
-                if int(statistics.mean(eachCard[-3])) > MIN_SCORE and eachCard != last_card:
+                if int(max(eachCard[-3])) > MIN_SCORE and eachCard != last_card:
                     selected = True
                     num = i
                     current_card = eachCard
@@ -286,7 +290,7 @@ def get_card_speaking(current_score, last_card, my_scored_cards, score_weights):
             while current_score < len(my_scored_cards) and not selected:
                 i = 0
                 for eachCard in my_scored_cards[current_score]:
-                    if int(statistics.mean(eachCard[-3])) > MIN_SCORE and eachCard != last_card:
+                    if int(max(eachCard[-3])) > MIN_SCORE and eachCard != last_card:
                         selected = True
                         num = i
                         current_card = eachCard
@@ -328,7 +332,7 @@ def load_reading_dictionary(filename, sep = "\t"):
     i = 1
     for index, row in x.iterrows():
        # print(row)
-        this_score = int(statistics.mean(row[R_SCORE_HEADER]))
+        this_score = int(max(row[R_SCORE_HEADER]))
         dictionary[this_score].append([row[KANJI_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[L_SCORE_HEADER],row[S_SCORE_HEADER],row[W_SCORE_HEADER]])
         i = i + 1
 
@@ -381,7 +385,7 @@ def get_card_reading(current_score, last_card, my_scored_cards, score_weights):
     if not my_scored_cards[current_score] == []:
         i = 0
         for eachCard in my_scored_cards[current_score]:
-            if int(statistics.mean(eachCard[-2])) > MIN_SCORE and eachCard != last_card:
+            if int(max(eachCard[-2])) > MIN_SCORE and eachCard != last_card:
                 selected = True
                 num = i
                 current_card = eachCard
@@ -395,7 +399,7 @@ def get_card_reading(current_score, last_card, my_scored_cards, score_weights):
         while current_score > 0 and not selected:
             i = 0
             for eachCard in my_scored_cards[current_score]:
-                if int(statistics.mean(eachCard[-2])) > MIN_SCORE and eachCard != last_card:
+                if int(max(eachCard[-2])) > MIN_SCORE and eachCard != last_card:
                     selected = True
                     num = i
                     current_card = eachCard
@@ -410,7 +414,7 @@ def get_card_reading(current_score, last_card, my_scored_cards, score_weights):
             while current_score < len(my_scored_cards) and not selected:
                 i = 0
                 for eachCard in my_scored_cards[current_score]:
-                    if int(statistics.mean(eachCard[-2])) > MIN_SCORE and eachCard != last_card:
+                    if int(max(eachCard[-2])) > MIN_SCORE and eachCard != last_card:
                         selected = True
                         num = i
                         current_card = eachCard
@@ -441,7 +445,7 @@ def load_writing_dictionary(filename, sep = "\t"):
     i = 1
     for index, row in x.iterrows():
        # print(row)
-        this_score = int(statistics.mean(row[W_SCORE_HEADER]))
+        this_score = int(max(row[W_SCORE_HEADER]))
         dictionary[this_score].append([row[KANJI_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[L_SCORE_HEADER],row[S_SCORE_HEADER],row[R_SCORE_HEADER]])
         i = i + 1
 
@@ -494,7 +498,7 @@ def get_card_writing(current_score, last_card, my_scored_cards, score_weights):
     if not my_scored_cards[current_score] == []:
         i = 0
         for eachCard in my_scored_cards[current_score]:
-            if int(statistics.mean(eachCard[-1])) > MIN_SCORE and eachCard != last_card:
+            if int(max(eachCard[-1])) > MIN_SCORE and eachCard != last_card:
                 selected = True
                 num = i
                 current_card = eachCard
@@ -508,7 +512,7 @@ def get_card_writing(current_score, last_card, my_scored_cards, score_weights):
         while current_score > 0 and not selected:
             i = 0
             for eachCard in my_scored_cards[current_score]:
-                if int(statistics.mean(eachCard[-1])) > MIN_SCORE and eachCard != last_card:
+                if int(max(eachCard[-1])) > MIN_SCORE and eachCard != last_card:
                     selected = True
                     num = i
                     current_card = eachCard
@@ -523,7 +527,7 @@ def get_card_writing(current_score, last_card, my_scored_cards, score_weights):
             while current_score < len(my_scored_cards) and not selected:
                 i = 0
                 for eachCard in my_scored_cards[current_score]:
-                    if int(statistics.mean(eachCard[-1])) > MIN_SCORE and eachCard != last_card:
+                    if int(max(eachCard[-1])) > MIN_SCORE and eachCard != last_card:
                         selected = True
                         num = i
                         current_card = eachCard

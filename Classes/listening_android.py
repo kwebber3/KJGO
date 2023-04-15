@@ -79,8 +79,19 @@ class ListeningBox(BoxLayout,):
         self.add_widget(self.endButton)
         '''
         self.system = os.name
+        self.trashcard_button = Button(text="Trash Word Card", on_release=partial(self.TrashCard))
+        self.add_widget(self.trashcard_button)
 
         self.GetCard()
+
+
+    def TrashCard(self, instance):
+        #print(self.current_score)
+        self.my_scored_cards[self.current_score].pop(self.index)
+        self.GetCard()
+        
+
+
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -124,13 +135,19 @@ class ListeningBox(BoxLayout,):
         self.current_score, self.current_card, self.index = get_card(self.current_score,self.last_score,self.my_scored_cards, self.score_weights)
         self.saved = False
 
-       # print(self.current_card)
-        self.Japanese = self.current_card[JP_INDEX]
-        self.get_word()
-        self.English = '\n'.join(self.current_card[ENG_INDEX])
-        self.Japanese_Example = '\n'.join(self.current_card[JP_SENT_INDEX])
-        self.English_Sentence = '\n'.join(self.current_card[ENG_SENT_INDEX])
-        self.Japanese_Example = re.sub("<[/]*b>","",self.Japanese_Example)
+        print(self.current_score)
+        if self.current_score == -1:
+            self.trashcard_button.disabled = True
+            self.addButton.disabled = True
+            self.subtractButton.disabled = True
+        else:
+            self.Japanese = self.current_card[JP_INDEX]
+            self.get_word()
+            self.English = '\n'.join(self.current_card[ENG_INDEX])
+            self.Japanese_Example = '\n'.join(self.current_card[JP_SENT_INDEX])
+            self.English_Sentence = '\n'.join(self.current_card[ENG_SENT_INDEX])
+            self.Japanese_Example = re.sub("<[/]*b>","",self.Japanese_Example)
+            
 
     def refresh(self):
         self.cardPrompt.text = ""
@@ -160,6 +177,7 @@ class ListeningBox(BoxLayout,):
         self.last_score = new_score
         self.GetCard()
     
+
     def SubtractPoint(self, instance):
         #print(self.current_score)
         this_card = self.my_scored_cards[self.current_score].pop(self.index)
@@ -171,4 +189,5 @@ class ListeningBox(BoxLayout,):
         self.refresh()
         self.last_score = new_score
         self.GetCard()
+
         #print(this_card)
