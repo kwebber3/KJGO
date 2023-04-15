@@ -235,7 +235,7 @@ def export_speakingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding
     df2 = df2.loc[:, score_table.columns]
 
 
-    df2.to_csv(filename, sep = delimiter,encoding = encoding)
+    df2.to_csv(filename, sep = delimiter,encoding = encoding,index=False)
 
 def format_to_table_speaking(scored_dictionary):
     values = {}
@@ -359,7 +359,7 @@ def export_readingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding 
     ##lastly, re-create the original column order
     df2 = df2.loc[:, score_table.columns]
 
-    df2.to_csv(filename, sep = delimiter,encoding = encoding)
+    df2.to_csv(filename, sep = delimiter,encoding = encoding,index=False)
 
 def format_to_table_reading(scored_dictionary):
     values = {}
@@ -472,7 +472,7 @@ def export_writingLibrary_to_txt(scored_dict,filename,delimiter ="\t", encoding 
     ##lastly, re-create the original column order
     df2 = df2.loc[:, score_table.columns]
 
-    df2.to_csv(filename, sep = delimiter,encoding = encoding)
+    df2.to_csv(filename, sep = delimiter,encoding = encoding,index=False)
 
 def format_to_table_writing(scored_dictionary):
     values = {}
