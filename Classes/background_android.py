@@ -2,7 +2,7 @@ from pandas import *
 import pandas as pd
 import random
 
-MAX_SCORE = 6000
+MAX_SCORE = 200
 START_SCORE = 1
 
 '''
@@ -51,7 +51,7 @@ MIN_SCORE = 7
 def read_table_LS(filepath_or_buffer, delimiter="\t",encoding = "UTF-16"):
     x = read_table(filepath_or_buffer=filepath_or_buffer, delimiter=delimiter,encoding = encoding)
 
-    print("loading")
+    print("grouping")
 
     x = x.groupby(R_HEADER, as_index=False).agg(LS_AG_COlUMNS)
 
@@ -61,16 +61,17 @@ def load_listening_dictionary(filename, sep = "\t"):
     x = read_table_LS(filepath_or_buffer=filename, delimiter=sep)
     
     dictionary = {}
-
+    print("making dict")
     for number in range(0,MAX_SCORE):
         dictionary[number] = []
-
+    print("populating dict")
     i = 1
     for index, row in x.iterrows():
        # print(row)
         this_score = int(max(row[L_SCORE_HEADER]))
         dictionary[this_score].append([row[KANJI_HEADER],row[R_HEADER],row[ENGLISH_HEADER],row[K_SENTENCE_HEADER],row[JP_SENTENCE_HEADER],row[ENG_SENTENCE_HEADER],row[S_SCORE_HEADER],row[R_SCORE_HEADER],row[W_SCORE_HEADER]])
         i = i + 1
+
 
     score_weights = update_weights(dictionary, i)
     return dictionary, score_weights, i
