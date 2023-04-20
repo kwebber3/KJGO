@@ -2,7 +2,7 @@ from pandas import *
 import pandas as pd
 import random
 
-MAX_SCORE = 200
+MAX_SCORE = 1000
 START_SCORE = 1
 
 '''
