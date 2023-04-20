@@ -171,6 +171,7 @@ class SearchBoxPage(BoxLayout):
 
     def makeFlashCard(self, entry, instance):
         i = 0
+        instance.disabled = True
         new_lines = pd.DataFrame({KANJI_HEADER: [],
                                 R_HEADER: [],
                                 ENGLISH_HEADER: [],
